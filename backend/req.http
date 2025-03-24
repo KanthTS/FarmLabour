@@ -1,0 +1,170 @@
+
+post http://localhost:3000/farmer-api/farmer
+Content-Type: application/json
+
+{
+  "role": "farmer",
+  "email": "kanth@ex.com",
+  "firstName": "kanth",
+  "lastName": "",
+  "phoneNo": 9873254321,
+  "location": "Pu",
+  "profileImageUrl": "http://example.com/images/john_doe.jpg",
+  "isActive": true
+}
+
+
+
+
+
+
+
+###
+post http://localhost:3000/labour-api/labour
+Content-Type: application/json
+
+{
+  "role": "labour",
+  "email": "lakshmi@exae.com",
+  "firstName": "John",
+  "lastName": "Doe",
+  "phoneNo": 9876543210,
+  "location": "Pune, Maharashtra",
+  "profileImageUrl": "http://example.com/images/john_doe.jpg",
+  "isActive": true
+}
+
+
+###
+post http://localhost:3000/farmer-api/job
+Content-Type: application/json
+
+{
+  "jobId": "{{$timestamp}}",
+  "title": "farmer ",
+  "content": "Responsible for overseeing farm operations, managing workers, and ensuring crop quality.",
+  "wages": 1000,
+  "startDate": "2025-03-01T00:00:00.000Z",
+  "endDate": "2025-06-01T00:00:00.000Z",
+  "location": " USA",
+  
+  "DateOfCreation": "{{$datetime iso8601}}",
+  "DateOfModification": "{{$datetime iso8601}}",
+  "reviewData": {
+    "nameOfFarmer": "John",
+    "rating": 5,
+    "comment": "Great job managing the farm, very reliable and knowledgeable.",
+    "profileImageUrl": "http://example.com/john-doe.jpg"
+  },
+  "isJobActive":"true"
+}
+
+
+###
+put http://localhost:3000/farmer-api/job/jobId
+Content-Type: application/json
+
+{
+   "jobId": "1739971261",
+    "title": "farm ",
+    "content": "Responsible for overseeing farm operations, managing workers, and ensuring crop quality.",
+    "wages": 1500,
+    "startDate": "2025-03-01T00:00:00.000Z",
+    "endDate": "2025-06-01T00:00:00.000Z",
+    "location": " USA",
+    "status": "close",
+    "DateOfCreation": "2025-02-19T13:21:01.719Z",
+    "DateOfModification": "2025-02-19T13:21:01.719Z",
+    "reviewData": {
+      "nameOfFarmer": "siddu",
+      "rating": 2,
+      "comment": "Great job managing the farm, very reliable and knowledgeable.",
+      "profileImageUrl": "http://example.com/john-doe.jpg",
+      "_id": "67b5dabd1333d16bb364d715"
+    },
+    "isJobActive": true,
+    "_id": "67b5dabd1333d16bb364d714",
+    "__v": 0
+}
+
+
+###
+put http://localhost:3000/farmer-api/jobs/jobId
+Content-Type: application/json
+
+{
+   "jobId": "1739971261",
+    "title": "farm ",
+    "content": "Responsible for overseeing farm operations, managing workers, and ensuring crop quality.",
+    "wages": 1500,
+    "startDate": "2025-03-01T00:00:00.000Z",
+    "endDate": "2025-06-01T00:00:00.000Z",
+    "location": " USA",
+    "status": "close",
+    "DateOfCreation": "2025-02-19T13:21:01.719Z",
+    "DateOfModification": "2025-02-19T13:21:01.719Z",
+    "reviewData": {
+      "nameOfFarmer": "siddu",
+      "rating": 2,
+      "comment": "Great job managing the farm, very reliable and knowledgeable.",
+      "profileImageUrl": "http://example.com/john-doe.jpg",
+      "_id": "67b5dabd1333d16bb364d715"
+    },
+    "isJobActive":false,
+    "_id": "67b5dabd1333d16bb364d714",
+    "__v": 0
+}
+###
+get http://localhost:3000/farmer-api/jobs
+
+###
+get http://localhost:3000/farmer-api/applications
+###
+post http://localhost:3000/labour-api/application
+Content-Type: application/json
+
+{
+  "labourId":{
+          
+    "_id": "67b4bfff51c48f594ec3257d",
+    "role": "labour",
+    "email": "lakshmi@exae.com",
+    "firstName": "John",
+    "lastName": "Doe",
+    "phoneNo": 9876543210,
+    "location": "Pune, Maharashtra",
+    "profileImageUrl": "http://example.com/images/john_doe.jpg",
+    "isActive": true,
+    "__v": 0
+   
+  },
+  "jobId":{
+      "jobId": "1739971261",
+    "title": "farmer ",
+    "content": "Responsible for overseeing farm operations, managing workers, and ensuring crop quality.",
+    "wages": 1000,
+    "startDate": "2025-03-01T00:00:00.000Z",
+    "endDate": "2025-06-01T00:00:00.000Z",
+    "location": " USA",
+    "status": "open",
+    "DateOfCreation": "2025-02-19T13:21:01.719Z",
+    "DateOfModification": "2025-02-19T13:21:01.719Z",
+    "reviewData": {
+      "nameOfFarmer": "John",
+      "rating": 5,
+      "comment": "Great job managing the farm, very reliable and knowledgeable.",
+      "profileImageUrl": "http://example.com/john-doe.jpg",
+      "_id": "67b5dabd1333d16bb364d715"
+    },
+    "isJobActive": true,
+    "_id": "67b5dabd1333d16bb364d714",
+    "__v": 0
+  },
+  "status":"pending",
+  "skills":"harvesting",
+  "message":"i know very well",
+  "dateOfCreation":"{{$datetime iso8601}}"
+}
+
+###
+get http://localhost:3000/labour-api/jobs
