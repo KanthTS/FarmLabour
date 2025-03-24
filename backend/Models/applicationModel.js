@@ -54,7 +54,8 @@ dateOfCreation:{
   location:{
     type:String,
     required:true
-  }
+  },
+  
 },{"strict":"throw"})
 
 const applicationData=mongoose.model('application',applicationSchema)

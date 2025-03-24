@@ -168,3 +168,13 @@ Content-Type: application/json
 
 ###
 get http://localhost:3000/labour-api/jobs
+
+###
+
+post http://localhost:3000/email-api/approve
+Content-Type: application/json
+
+
+{
+  "email": "tsiddalakshmikanth@gmail.com"
+}

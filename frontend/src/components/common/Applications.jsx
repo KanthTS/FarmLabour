@@ -29,6 +29,7 @@ function Applications() {
       setLoad(false)
     }
    }
+   
    function live(e){
     const val=e.target.value;
       setInput(val)
@@ -46,6 +47,8 @@ function Applications() {
     });
     setData(d);
    }
+   
+
    useEffect(()=>{
     getApp()
    },[])
@@ -79,7 +82,7 @@ function Applications() {
               {
                 currentUser.role==='farmer'?
               <>
-              <button className="btn btn-success">Approve</button>
+              <button className="btn btn-success" >Approve</button>
               </>:
               <>
               
