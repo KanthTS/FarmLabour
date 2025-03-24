@@ -76,7 +76,3 @@ In the long term, the platform can expand to physical Farmer-Labor Centers in ag
 ### *8. Conclusion*  
 The proposed digital platform aims to revolutionize the way agricultural labor is managed by directly connecting farmers with skilled laborers, ensuring better job accessibility, fair wages, and improved agricultural productivity. By leveraging technology and strategic partnerships, this solution can significantly enhance rural employment and food production efficiency.  
 
-### *References*  
-•⁠  ⁠FAO (2023). The Role of Agricultural Labor in Food Security.  
-•⁠  ⁠World Bank (2022). Rural Employment and Digital Transformation in Agriculture.  
-•⁠  ⁠National Agricultural Policy Reports (2021-2023).
