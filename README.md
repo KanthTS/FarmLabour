@@ -1,7 +1,6 @@
 # FarmLabour
  *Bridging the Gap Between Farmers and Agricultural Laborers: A Digital Platform for Job Matching*  
 
-
 I'm currently developing it.It is farmLabour Job portal.
 ### *Abstract*  
 Agricultural productivity is significantly influenced by the availability of skilled and timely labor. Farmers often struggle to find reliable labor for tasks such as planting, harvesting, and other seasonal activities, while laborers in rural areas face difficulty securing consistent employment opportunities. This research proposes the development of a digital platform that connects farmers with agricultural laborers, facilitating job postings, applications, and labor management. The platform will feature job listings based on type, duration, location, and compensation, allowing laborers to find suitable opportunities. Over time, the system can evolve into Farmer-Labor Centers to enhance labor efficiency. This paper explores the challenges, the proposed solution, its implementation, and potential socio-economic impacts.  
