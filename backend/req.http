@@ -30,7 +30,7 @@ Content-Type: application/json
   "lastName": "Doe",
   "phoneNo": 9876543210,
   "location": "Pune, Maharashtra",
-  "profileImageUrl": "http://example.com/images/john_doe.jpg",
+  "profileImageUrl": "http://example.com//john_doe.jpg",
   "isActive": true
 }
 

@@ -8,45 +8,66 @@ function CreatePost() {
 const nav=useNavigate()
 let [date,setDate]=useState('')
 let [fieldImage,setFieldImage]=useState('')
-function change(e){
-  console.log(e.target.files[0])
-   setFieldImage(e.target.files[0])
-}
+let [images,set]=useState([]);
+// function change(e){
+//   console.log(e.target.files[0])
+//    setFieldImage(e.target.files[0])
+// }
 useEffect(()=>{
   const today=new Date().toISOString().split('T')[0];
   setDate(today)
+  // getImages()
 },[])
+// async function submit(){
+//     const formData=new FormData()
+//     formData.append('file',fieldImage)
+//    let res=await axios.post('http://localhost:3000/upload',formData)
+//    console.log(res.data)
+// }
+// async function getImages(){
+//   let res= await axios.get('http://localhost:3000/uploads')
+//   setImages(res.data.payload)
+// }
 const {register,handleSubmit,formState:{errors}}=useForm()
 const {currentUser,setCurrentUser}=useContext(createObj)
- async function detailsOfpost(obj){
-  console.log("form",obj)
-  
-  const farmerData={
-    nameOfFarmer:currentUser.firstName,
-    profileImageUrl:currentUser.profileImageUrl,
-    email:currentUser.email
-  }
-   obj.farmerData=farmerData;
-  obj.jobId=Date.now()
-  let d=new Date();
-  obj.DateOfCreation = `${d.getDate()}_${d.getMonth() + 1}_${d.getFullYear()}_${d.toLocaleTimeString('en-US', { hour12: true })}`;
-obj.DateOfModification = `${d.getDate()}_${d.getMonth() + 1}_${d.getFullYear()}_${d.toLocaleTimeString('en-US', { hour12: true })}`;
-  const reviewData={
-    nameOfFarmer:currentUser.firstName,
-    profileImageUrl:currentUser.profileImageUrl,
-    rating:currentUser.rating,
-    comment:currentUser.comment
-    
-  } 
-  obj.reviewData=reviewData;
-  obj.isJobActive=true;
 
-  let res=await axios.post('http://localhost:3000/farmer-api/job',obj)
-  console.log(res)
-  if(res.status===201){
-     nav(`/farmerprofile/${currentUser?.email}/jobs`)
+function detailsOfpost(obj) {
+
+
+  const d = new Date();
+
+  // Add nested farmerData
+  obj.farmerData = {
+    nameOfFarmer: currentUser.firstName,
+    email: currentUser.email,
+    profileImageUrl: currentUser.profileImageUrl || ""
+  };
+
+  // Add nested reviewData
+  obj.reviewData = {
+    nameOfFarmer: currentUser.firstName,
+    rating: currentUser.rating || 5,
+    comment: currentUser.comment || "",
+    profileImageUrl: currentUser.profileImageUrl || ""
+  };
+
+  obj.jobId = Date.now();
+  obj.DateOfCreation = `${d.getDate()}_${d.getMonth() + 1}_${d.getFullYear()}_${d.toLocaleTimeString("en-US", { hour12: true })}`;
+  obj.DateOfModification = obj.DateOfCreation;
+  obj.isJobActive = true;
+
+  axios
+    .post("http://localhost:3000/farmer-api/job", obj)
+    .then((res) => {
+      if (res.status === 201) {
+        nav(`/farmerprofile/${currentUser.email}/jobs`);
+      }
+    })
+    .catch((err) => {
+      console.log("Error while posting job:", err);
+      alert("Something went wrong while submitting the job!");
+    });
   }
-}
 
   return (
     <div >
@@ -279,6 +300,11 @@ obj.DateOfModification = `${d.getDate()}_${d.getMonth() + 1}_${d.getFullYear()}_
         <option value="10 A.M.-5P.M.">10 A.M.-5P.M. </option>
       </select>
     </div>
+    {/* <div>
+      <label htmlFor="images" className="text-white fs-5">Upload Crop Image:</label>
+      <input type="file" id="images" {...register('images',{required:'must upload image'}) } onChange={change} />
+      <button onClick={submit}>upload</button>
+    </div> */}
     <button type="submit" className="btn btn-success" >Post</button>
   </form>
   </div>

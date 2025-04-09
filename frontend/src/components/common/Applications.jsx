@@ -2,6 +2,7 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useContext } from 'react';
 import { createObj } from '../contexts/FarmerLabourContext';
+import { useNavigate } from 'react-router-dom';
 
 
 function Applications() {
@@ -11,14 +12,17 @@ function Applications() {
   const [err,setErr]=useState('');
   const [load,setLoad]=useState(false)
    const [data,setData]=useState([])
+   const nav=useNavigate()
    async function getApp(){
      setLoad(true)
     let res= await axios.get('http://localhost:3000/farmer-api/applications')
+   
     try{
       if(res.data.message==='applications'){
         setApp(res.data.payload)
         setData(res.data.payload)
       }
+     
       else{
         setErr(res.data.message)
       }
@@ -47,13 +51,30 @@ function Applications() {
     });
     setData(d);
    }
+  //  useEffect(()=>{
+  //  const stored=localStorage.getItem('currentUser');
+  //  if (stored) {
+  //   setCurrentUser(JSON.parse(stored));
+  // }
+  //  },[])
    
+  //  useEffect(()=>{
+  //     if(currentUser){
+  //       localStorage.setItem('currentUser',JSON.stringify('currentUser'))
+  //     }
+  //  },[])
 
    useEffect(()=>{
     getApp()
    },[])
-
+   async function approved(){
+    let res=await axios.get('http://localhost:3000/farmer-api/applications')
+    if(res.status===200){
+      nav(`/farmerprofile/${currentUser.email}/approve`,{state:app})
+    }
+   }
    console.log('app',app)
+   console.log(currentUser)
   return (
     <div>
      <div>
@@ -80,14 +101,12 @@ function Applications() {
             <div className="card-footer d-flex justify-content-between">
               <p >created on..{id.dateOfCreation}</p>
               {
-                currentUser.role==='farmer'?
-              <>
-              <button className="btn btn-success" >Approve</button>
-              </>:
-              <>
-              
-              </>
-              } 
+                currentUser?.role === 'labour' ?
+                    <button className="btn btn-success">submitted</button>
+                    :
+                    <button className="btn btn-success" onClick={approved}>Approve</button>
+                }
+
               </div>
           </div>
        </div>

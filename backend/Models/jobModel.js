@@ -15,7 +15,6 @@ const farmerDataSchema=new mongoose.Schema({
   }
 },{"strict":"throw"})
 
-
 const reviewsSchema=new mongoose.Schema({
    nameOfFarmer:{
       type:String,
@@ -44,11 +43,16 @@ const jobSchema=new mongoose.Schema({
       farmerData:{
         type:farmerDataSchema
       },
+      
      title:{
       type:String,
         required:true,
         unique:true
      },
+    //  image:{
+    //    type:String,
+    //    required:true
+    //  },
      content:{
       type:String,
         required:true

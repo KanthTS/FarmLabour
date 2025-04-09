@@ -18,6 +18,7 @@ import LabourProfile from './components/labour/LabourProfile.jsx'
 import FarmerLabourContext from './components/contexts/FarmerLabourContext.jsx'
 import ApplyJob from './components/labour/ApplyJob.jsx'
 import Applications from './components/common/Applications.jsx'
+import Approve from './components/farmer/Approve.jsx'
 const browserObj=createBrowserRouter([
   {
     path:'/',
@@ -66,6 +67,10 @@ const browserObj=createBrowserRouter([
           {
             path:'app',
             element:<Applications/>
+          },
+          {
+            path:'approve',
+            element:<Approve/>
           },
           {
             path:'',
