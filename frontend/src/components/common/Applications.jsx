@@ -1,5 +1,6 @@
 import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
+
 import { useContext } from 'react';
 import { createObj } from '../contexts/FarmerLabourContext';
 import { useNavigate } from 'react-router-dom';
@@ -7,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 
 function Applications() {
    const {currentUser,setCurrentUser}=useContext(createObj)
+ 
   const [app,setApp]=useState([])
   const [input,setInput]=useState('')
   const [err,setErr]=useState('');
@@ -51,6 +53,17 @@ function Applications() {
     });
     setData(d);
    }
+   async function sending(labourEmail){
+    let res=await axios.post('http://localhost:3000/email-api/approve',
+      {
+        to:labourEmail,
+        subject:"you are selected",
+        message:"thankyou for your patience you can join for work within 10 days"
+      }
+    )
+    console.log('email sent succesfully',res.data)
+    nav(`/farmerprofile/${currentUser.email}/approve`,{state:app})
+   }
   //  useEffect(()=>{
   //  const stored=localStorage.getItem('currentUser');
   //  if (stored) {
@@ -67,12 +80,7 @@ function Applications() {
    useEffect(()=>{
     getApp()
    },[])
-   async function approved(){
-    let res=await axios.get('http://localhost:3000/farmer-api/applications')
-    if(res.status===200){
-      nav(`/farmerprofile/${currentUser.email}/approve`,{state:app})
-    }
-   }
+ 
    console.log('app',app)
    console.log(currentUser)
   return (
@@ -104,7 +112,9 @@ function Applications() {
                 currentUser?.role === 'labour' ?
                     <button className="btn btn-success">submitted</button>
                     :
-                    <button className="btn btn-success" onClick={approved}>Approve</button>
+              
+                      <button type="submit" onClick={()=>sending(id.labourData.email)}>Approve</button>
+                    
                 }
 
               </div>

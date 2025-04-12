@@ -4,6 +4,7 @@ app.use(exp.json())
 const jobModel=require('./Models/jobModel')
 const cors=require('cors')
 app.use(cors())
+const emailApp=require('./Apis/emailApi')
 const farmerApp=require('./Apis/farmerApi')
 
 // const multer=require('multer')
@@ -48,3 +49,4 @@ app.use('/labour-api',labourApp)
 //     const r=await jobModel.find();
 //     res.send({message:"gettingdetails",payload:r})
 // })
+app.use('/email-api',emailApp)

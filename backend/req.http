@@ -13,7 +13,15 @@ Content-Type: application/json
   "isActive": true
 }
 
+###
+post http://localhost:3000/email-api/approve
+Content-Type: application/json
 
+{
+  "to":"tsiddakanth@gmail.com",
+  "subject":"about approval",
+  "message":"your approved for these job.thankyou for your patience"
+}
 
 
 
