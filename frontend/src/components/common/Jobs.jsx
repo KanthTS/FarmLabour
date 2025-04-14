@@ -7,6 +7,7 @@ function Jobs() {
     const [jobs,setJobs]=useState([])
     const [err,setErr]=useState('')
     const [load,setLoad]=useState(false)
+    const [editStatus,setEditStatus]=useState(false)
     const [searchInputValue,setSearchInputValue]=useState('')
      const [data,setData]=useState([])
    async function getJobs(){
@@ -30,6 +31,8 @@ function Jobs() {
       }
      
     }
+
+
     function live(e){
        const val=e.target.value;
        setSearchInputValue(val)

@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 
 function Applications() {
    const {currentUser,setCurrentUser}=useContext(createObj)
- 
+  //  const [approvedId,setApprovedId]=useState([])
   const [app,setApp]=useState([])
   const [input,setInput]=useState('')
   const [err,setErr]=useState('');
@@ -60,7 +60,10 @@ function Applications() {
         subject:"you are selected",
         message:"thankyou for your patience you can join for work within 10 days"
       }
-    )
+    );
+
+    
+    // setApprovedId(prev=>[...prev,applicationId])
     console.log('email sent succesfully',res.data)
     nav(`/farmerprofile/${currentUser.email}/approve`,{state:app})
    }
@@ -112,8 +115,17 @@ function Applications() {
                 currentUser?.role === 'labour' ?
                     <button className="btn btn-success">submitted</button>
                     :
-              
-                      <button type="submit" onClick={()=>sending(id.labourData.email)}>Approve</button>
+                     
+                 
+                    <button className="btn btn-primary" onClick={() => sending(id.labourData.email)}>Approve</button>
+                    
+             
+                    // approvedId.includes(id.applicationId) ? (
+                    //   <button className="btn btn-secondary" disabled>Approved</button>
+                    // ) : (
+                    //   <button className="btn btn-primary" onClick={() => sending(id.labourData.email, id.applicationId)}>Approve</button>
+                    // )  because you didnt given values in .env file
+                    
                     
                 }
 

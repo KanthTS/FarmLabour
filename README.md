@@ -41,7 +41,7 @@ The platform will be developed as a web and mobile application. Key technologies
 •⁠  ⁠*Front-End:* React Native for mobile applications, and Angular or Vue.js for the web interface.  
 •⁠  ⁠*Back-End:* Node.js with Express or Django for robust data handling.  
 •⁠  ⁠*Database:* PostgreSQL or Firebase for real-time job postings and applications.  
-•⁠  ⁠*AI/ML Integration:* Machine learning algorithms for matching farmers with suitable laborers based on job history and skills.  
+
 
 #### *4.2. Pilot Implementation in Selected Regions*  
 A phased rollout will be conducted, beginning with selected agricultural regions where labor demand is high. Initial testing will involve local farmers and labor groups to refine the platform’s functionality.  

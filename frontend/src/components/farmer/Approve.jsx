@@ -11,20 +11,10 @@ function Approve() {
    console.log("state",state)
   return (
     <div>
-      <div className="text-center fs-4 text-success" style={{border:'solid 1px '}}>Approved Successfully </div>
+      <div className="text-center fs-4 text-success" style={{border:'solid 1px ',}}>Approved Successfully </div>
       <div>
-    {/* {
-      state.map((id)=>(
-      <div key={id.applicationId}> 
-        <h3>{id.fullname}</h3>
+    
       
-       </div>
-
-      ))
-    } */}
-    <form >
-
-    </form>
       </div>
     </div>
   )

@@ -23,8 +23,9 @@ farmerApp.get('/jobs',handler(async(req,res)=>{
     res.status(200).send({message:"jobdetails",payload:r})
 }))
 farmerApp.put('/job/:jobId',handler(async(req,res)=>{
+
     let m=req.body
-    let r=await jobModel.findByIdAndUpdate(m._id,{...m},{returnOriginal:false})
+    let r=await jobModel.findByIdAndUpdate(m._id,{...m},{new:true})
     res.status(200).send({message:"job details updated",payload:r})
 }))
 farmerApp.put('/jobs/:jobId',handler(async(req,res)=>{

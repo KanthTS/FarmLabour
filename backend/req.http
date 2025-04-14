@@ -80,7 +80,7 @@ Content-Type: application/json
     "startDate": "2025-03-01T00:00:00.000Z",
     "endDate": "2025-06-01T00:00:00.000Z",
     "location": " USA",
-    "status": "close",
+   
     "DateOfCreation": "2025-02-19T13:21:01.719Z",
     "DateOfModification": "2025-02-19T13:21:01.719Z",
     "reviewData": {
@@ -108,7 +108,7 @@ Content-Type: application/json
     "startDate": "2025-03-01T00:00:00.000Z",
     "endDate": "2025-06-01T00:00:00.000Z",
     "location": " USA",
-    "status": "close",
+    
     "DateOfCreation": "2025-02-19T13:21:01.719Z",
     "DateOfModification": "2025-02-19T13:21:01.719Z",
     "reviewData": {

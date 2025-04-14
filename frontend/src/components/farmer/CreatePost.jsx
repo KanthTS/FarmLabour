@@ -279,12 +279,7 @@ function detailsOfpost(obj) {
       </select>
       {errors.location && <p className="text-danger">{errors.location.message}</p>}
     </div>
-    {/* <div>
-      <label htmlFor="fieldImage" className="text-white fs-5">Field Image:</label>
-      <input type="file" id="fieldImage" onChange={change} name="fieldImage" {...register('fieldImage',{required:"field image is required"})} className="m-3 w-50  text-white"
-         style={{backgroundColor:"transparent",border:"solid 1px red"}}/>
-      {errors.fieldimage && <p className="text-danger">{errors.fieldimage.message}</p>}
-    </div> */}
+    
     <div>
       <label htmlFor="zipcode" className="text-white fs-5">ZipCode:</label>
       <input type="number" placeholder="XXXXXX"  id="zipcode" name="zipcode" min="100000" max="999999" {...register('zipcode',{required:"must have 6-digits"})} className="m-3 w-50  text-white" style={{backgroundColor:"transparent",border:"solid 1px red"}}/>
@@ -300,11 +295,7 @@ function detailsOfpost(obj) {
         <option value="10 A.M.-5P.M.">10 A.M.-5P.M. </option>
       </select>
     </div>
-    {/* <div>
-      <label htmlFor="images" className="text-white fs-5">Upload Crop Image:</label>
-      <input type="file" id="images" {...register('images',{required:'must upload image'}) } onChange={change} />
-      <button onClick={submit}>upload</button>
-    </div> */}
+
     <button type="submit" className="btn btn-success" >Post</button>
   </form>
   </div>
@@ -314,3 +305,17 @@ function detailsOfpost(obj) {
 }
 
 export default CreatePost
+
+
+    {/* <div>
+      <label htmlFor="images" className="text-white fs-5">Upload Crop Image:</label>
+      <input type="file" id="images" {...register('images',{required:'must upload image'}) } onChange={change} />
+      <button onClick={submit}>upload</button>
+    </div> */}
+
+    {/* <div>
+      <label htmlFor="fieldImage" className="text-white fs-5">Field Image:</label>
+      <input type="file" id="fieldImage" onChange={change} name="fieldImage" {...register('fieldImage',{required:"field image is required"})} className="m-3 w-50  text-white"
+         style={{backgroundColor:"transparent",border:"solid 1px red"}}/>
+      {errors.fieldimage && <p className="text-danger">{errors.fieldimage.message}</p>}
+    </div> */}
