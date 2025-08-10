@@ -1,0 +1,23 @@
+.footer-link {
+  color: #ffc107; /* Bootstrap yellow */
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer-link:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+.left-css{
+    margin-left: 80px;
+    width: 100%;
+}
+.contact-form{
+    border: 0.5px solid white;
+    border-radius: 20px;
+    width: 100%;
+}
+
+.last-name{
+    margin-left: 70px;
+}

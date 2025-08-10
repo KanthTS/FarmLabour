@@ -18,7 +18,7 @@ const farmerDataSchema=new mongoose.Schema({
 const reviewsSchema=new mongoose.Schema({
    nameOfFarmer:{
       type:String,
-        required:true
+        
    },
    rating:{
       type:Number,
@@ -47,7 +47,7 @@ const jobSchema=new mongoose.Schema({
      title:{
       type:String,
         required:true,
-        unique:true
+   
      },
     //  image:{
     //    type:String,

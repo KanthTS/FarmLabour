@@ -63,10 +63,11 @@ function Applications() {
     );
 
     
-    // setApprovedId(prev=>[...prev,applicationId])
+   
     console.log('email sent succesfully',res.data)
     nav(`/farmerprofile/${currentUser.email}/approve`,{state:app})
    }
+   
   //  useEffect(()=>{
   //  const stored=localStorage.getItem('currentUser');
   //  if (stored) {

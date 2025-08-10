@@ -6,7 +6,7 @@ const cors=require('cors')
 app.use(cors())
 const emailApp=require('./Apis/emailApi')
 const farmerApp=require('./Apis/farmerApi')
-
+const contactApp=require('./Apis/ContactApi')
 // const multer=require('multer')
 
 // const adminApp=require('./Apis/AdminApi')
@@ -50,3 +50,4 @@ app.use('/labour-api',labourApp)
 //     res.send({message:"gettingdetails",payload:r})
 // })
 app.use('/email-api',emailApp)
+app.use('/contact-api',contactApp)
