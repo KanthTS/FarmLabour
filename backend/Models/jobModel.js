@@ -1,6 +1,10 @@
 
 const mongoose=require('mongoose')
 const farmerDataSchema=new mongoose.Schema({
+  userId:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'farmerlabour'
+  },
   nameOfFarmer:{
     type:String,
         required:true
@@ -65,6 +69,11 @@ const jobSchema=new mongoose.Schema({
       type:Number,
       required:true
      },
+     workersNeeded:{
+      type:Number,
+      required:true,
+      min:1
+     },
      startDate:{
           type:Date,
           required:true
@@ -73,9 +82,23 @@ const jobSchema=new mongoose.Schema({
       type:Date,
       required:true
      },
+     // High-level location label (kept for backward compatibility / search)
      location:{
        type:String,
        required:true
+     },
+     // Structured location pieces (optional)
+     state:{
+       type:String
+     },
+     city:{
+       type:String
+     },
+     mandal:{
+       type:String
+     },
+     village:{
+       type:String
      },
     
     zipcode:{
@@ -95,6 +118,11 @@ const jobSchema=new mongoose.Schema({
     Timings:{
        type:String,
        required:true
+    },
+    workersNeeded:{
+      type:Number,
+      required:true,
+      min:1
     },
     reviewData:{
       type:reviewsSchema

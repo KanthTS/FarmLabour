@@ -1,15 +1,20 @@
-const {mongoose} = require("mongoose");
+const mongoose = require("mongoose");
 
 const farmerLabourSchema=new mongoose.Schema({
-    role:{
-        type:String,
+  role:{
+    type:String,
     required:true,
-    
-    },
+    enum:['farmer','labour','admin']
+  },
   email:{
     type:String,
     required:true,
     unique:true
+  },
+  password:{
+    type:String,
+    required:true,
+    minlength:6
   },
   firstName:{
     type:String,
@@ -17,26 +22,48 @@ const farmerLabourSchema=new mongoose.Schema({
   },
   lastName:{
     type:String,
-    
+    default:''
   },
-  // phoneNo:{
-  //   type:String,
-  //   required:true,default:"unknown"
-  // },
-  // location:{
-  //   type:String,
-  //   required:true,default:"unknown"
-  // },
-  
+  phoneNo:{
+    type:String,
+    default:''
+  },
+  location:{
+    type:String,
+    default:''
+  },
+  skills:{
+    type:[String],
+    default:[]
+  },
+  tools:{
+    type:[String],
+    default:[]
+  },
+  experienceYears:{
+    type:Number,
+    default:0
+  },
+  preferredWage:{
+    type:Number
+  },
+  availability:{
+    type:String,
+    default:''
+  },
+  languages:{
+    type:[String],
+    default:[]
+  },
   profileImageUrl:{
     type:String,
-    required:true
+    default:''
   },
   isActive:{
     default:true,
-   type:Boolean
+    type:Boolean
   }
 
 },{'strict':'throw'})
 const farmerLabourModel=mongoose.model('farmerlabour',farmerLabourSchema)
-module.exports=farmerLabourModel;
+module.exports=farmerLabourModel; 

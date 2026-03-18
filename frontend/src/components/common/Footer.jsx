@@ -1,102 +1,114 @@
-import React from 'react';
-import './Footer.css'; // custom styles if needed
-import { useForm } from 'react-hook-form';
-import { useState } from 'react';
-import axios from 'axios'
+import React, { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import client from '../../api/client'
+
 function Footer() {
-  const {register,handleSubmit,formState:{errors}}=useForm();
-  const [submitted,setSubmitted]=useState(false);
-  async function contacting(obj){
-    console.log(obj);
-    let res=await axios.post('http://localhost:3000/contact-api/contact',obj)
-    if(res.data.message=="contact"){
-      setSubmitted(true);
+  const { register, handleSubmit, formState:{ errors } } = useForm()
+  const [submitted, setSubmitted] = useState(false)
+
+  async function contacting(values) {
+    try {
+      const res = await client.post('/contact-api/contact', values)
+      if (res.data.message === 'contact') {
+        setSubmitted(true)
+      }
+    } catch (e) {
+      // keep footer silent on error for now
     }
   }
-  console.log(submitted)
+
+  const year = new Date().getFullYear()
+
   return (
-    <div>
-     {
-       submitted ?   <>
-      (
-              <div className="thank-you-message text-white" style={{ textAlign: 'center', padding: '50px',color:"black" }}>
-          <h3 className="text-primary">Thank you for contacting us!</h3>
-          <p className="text-primary">We’ll get back to you shortly.</p>
-        </div>
-      )
-      </>:
-      <>
-      (
-        <footer className=" text-white  py-4 mx-3 shadow-sm d-flex " style={{color:'black'}}>
-      <div className="left-css ">
-      <h3 className="mt-3">Contact </h3>
-      <h2 className="mt-3">Want us to help you in your interview</h2>
-      <h4 className="mt-3">Contact us</h4>
-      <h5 className="mt-3">Email:</h5>
-       <p style={{color:'#A1A1AA'}} className="mt-3">interviewdata@gmail.com</p>
-      <h5 className="mt-3">Phone </h5>
-      <p style={{color:'#A1A1AA'}} className="mt-3">+91 92356 789987</p>
-      <h5 className="mt-3">Hours</h5>
-      <p className='mt-3' style={{color:'#A1A1AA'}} >10 am to 5 pm</p>
-      </div>
-
-
-
-      {/* contact From */}
-      <div className="container  contact-form">
-      <form onSubmit={handleSubmit(contacting) } className='p-3 form-css'>
-        <div className='d-flex '>
-          <div className='mx-1 w-50'>
-        <label htmlFor="firstName" className='mt-3'>First Name</label>
-        <input type='text'
-        className='form-control mt-1'
-        id='firstName'
-        placeholder='e.g.Jack'
-        style={{background:'#1a1a1a',outline:'none',color:'#A1A1AA'}}
-        {...register("firstName")}></input>
-        </div>
-
-
-        <div className='last-name w-50'>
-        <label htmlFor="lastName" className='mt-3'>Last Name</label>
-        <input type='text'
-        className='form-control mt-1'
-        id='lastName'
-        placeholder='e.g.Woods'
-        style={{background:'#1a1a1a',outline:'none',color:'#ffffff'}}
-        {...register("lastName")}></input>
-        </div>
-        </div>
-        <div>
-          <label htmlFor="email" className='mt-3'>Email</label>
-        <input type='text'
-        className='form-control mt-1'
-        id='email'
-        placeholder='e.g.interviewdata@gmail.com'
-        style={{background:'#1a1a1a',outline:'none',color:'#ffffffff'}}
-        {...register("email")}></input>
-        </div>
-        <div className='mt-3'>
-          <label htmlFor="" >Message</label>
-          <div >
-          <textarea 
-            placeholder="  Your Message..." 
-            className='mt-1'
-            style={{background:'#1a1a1a',outline:'none',color:'#A1A1AA',borderRadius:'10px',width:'100%',height:'100px'}}
-           {...register('message')} 
-          />
+    <footer className="mt-5 bg-dark text-light">
+      <div className="container py-5">
+        {submitted ? (
+          <div className="text-center py-4">
+            <h3 className="mb-2">Thank you for contacting us!</h3>
+            <p className="text-secondary mb-0">We’ve received your message and will get back to you shortly.</p>
           </div>
-          <button className="btn mt-3 " style={{background:'white',color:'black',width:'100%'}}>Send Message</button>
-        </div>
-      </form>
+        ) : (
+          <div className="row g-4 align-items-start">
+            <div className="col-md-5">
+              <h4 className="fw-bold">Need help with hiring or work?</h4>
+              <p className="text-secondary mt-2">
+                Reach out and our team will assist you with using the platform, job postings, and worker applications.
+              </p>
+              <div className="mt-4">
+                <div className="mb-2">
+                  <div className="text-uppercase text-secondary small">Email</div>
+                  <div className="fw-semibold">usagemail1234@gmail.com</div>
+                </div>
+                <div className="mb-2">
+                  <div className="text-uppercase text-secondary small">Phone</div>
+                  <div className="fw-semibold">+91 9XXXXXXXXX</div>
+                </div>
+                <div className="mb-2">
+                  <div className="text-uppercase text-secondary small">Hours</div>
+                  <div className="fw-semibold">10:00 AM – 5:00 PM (IST)</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-md-7">
+              <div className="card bg-dark border-0 shadow-sm">
+                <div className="card-body">
+                  <h5 className="mb-3">Quick contact</h5>
+                  <form onSubmit={handleSubmit(contacting)}>
+                    <div className="row g-3">
+                      <div className="col-md-6">
+                        <label className="form-label">First Name</label>
+                        <input
+                          className="form-control bg-black text-light border-secondary"
+                          placeholder="e.g. Ramu"
+                          {...register('firstName')}
+                        />
+                      </div>
+                      <div className="col-md-6">
+                        <label className="form-label">Last Name</label>
+                        <input
+                          className="form-control bg-black text-light border-secondary"
+                          placeholder="e.g. Naik"
+                          {...register('lastName')}
+                        />
+                      </div>
+                      <div className="col-12">
+                        <label className="form-label">Email</label>
+                        <input
+                          type="email"
+                          className="form-control bg-black text-light border-secondary"
+                          placeholder="you@example.com"
+                          {...register('email')}
+                        />
+                      </div>
+                      <div className="col-12">
+                        <label className="form-label">Message</label>
+                        <textarea
+                          className="form-control bg-black text-light border-secondary"
+                          rows={3}
+                          placeholder="Tell us how we can help..."
+                          {...register('message')}
+                        />
+                      </div>
+                      <div className="col-12">
+                        <button type="submit" className="btn btn-warning w-100 mt-2">
+                          Send message
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+      <div className="border-top border-secondary text-center py-3 small text-secondary">
+        © {year} Farm Labour. All rights reserved.
       </div>
     </footer>
-      )
-      </>
-    
-     }
-    </div>
-  );
+  )
 }
 
-export default Footer;
+export default Footer
+

@@ -1,14 +1,21 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { createObj } from '../contexts/FarmerLabourContext'
 import { useLocation, useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import client from '../../api/client'
+import { useTranslation } from 'react-i18next'
 function ApplyJob() {
 const state=useLocation()
 console.log(state)
   const {register,handleSubmit,formState:{errors}}=useForm()
-  const {currentUser,setCurrentUser}=useContext(createObj)
-  const nav=useNavigate()
+const {currentUser}=useContext(createObj)
+const { t } = useTranslation()
+const nav=useNavigate()
+useEffect(()=>{
+  if(!currentUser || currentUser.role!=='labour'){
+    nav('/signin')
+  }
+},[currentUser])
   async function clickObj(obj) {
     console.log(obj)
     obj.jobId = state.state; // Ensure state has jobId
@@ -22,68 +29,47 @@ console.log(state)
      }     
      obj.labourData=labourData;
    
-      const res = await axios.post('http://localhost:3000/labour-api/application', obj);
+      const res = await client.post(`/jobs/${state.state}/applications`, obj);
       console.log(res);
       if (res.status === 201) {
         nav(`/labourprofile/${currentUser.email}/app`,{state:obj});
       }
    }
   return (
-    <div>
-      <h2 className="text-center" >Application</h2>
-       <form onSubmit={handleSubmit(clickObj)} className='form-control w-50 mx-auto text-center '>
-       <div>
-        <label htmlFor="fullname" className='fs-5 form-label'>Full Name:</label>
-           <input type="text" id="fullname" placeholder="Enter full name" className="m-3 w-50 " {...register('fullname',{required:"must be your full name"})}/>
-         {errors.fullname && <p className="text-danger">{errors.fullname.message}</p>}
-       </div>
-       
-       <div>
-          <label htmlFor="experience" className="fs-5 form-label">Experience:</label>
-          <input
-          placeholder="Enter your Experience"
-            className="m-3 w-50 "
-            type="text"
-            id="experience"
-            name="experience"
-            {...register('experience',{required:"must be above 1 year"})}
-          />
-          {errors.experience && <p className="text-danger ">{errors.experience.message}</p>}
-        </div>
-
-        <div>
-          <label htmlFor="workinghours" className="fs-5">Working Hours:</label>
-          <select id="workinghours" placeholder="Select Full-time/part-Time"  className="m-3 w-50  " name="workinghours" {...register('workinghours',{required:"working hours must be included"})}>
-          <option value="">select working-hours</option>
-            <option value="part-time">Part-Time</option>
-            <option value="full-time">Full-Time</option>
-
-          </select>
-          {errors.workinghours && <p>{errors.workinghours.message}</p>}
-        </div>
-
-        <div>
-          <label htmlFor="skills" className="fs-5">Skills:</label>
-          <input
-          placeholder="Select Your Skills"
-            className="m-3 w-50  "
-            type="text"
-            id="skills"
-            name="skills"
-           {...register('skills',{required:"must include your skills"})}
-          />
-          {errors.skills && <p className="text-danger">{errors.skills.message}</p>}
-        </div>
-        <div>
-      <label htmlFor="location" className="fs-5">Location:</label>
-      <select
-        id="location"
-        name="location"
-         className="m-3 w-50  "
-         style={{backgroundColor:"transparent",border:"solid 1px red"}}
-        {...register('location', { required: "Select correct details" })}
-      >
-         <option value="">Select a state</option>
+    <div className="container py-4">
+      <div className="card shadow-sm mx-auto" style={{maxWidth:'720px'}}>
+        <div className="card-body">
+          <h3 className="mb-3 text-center">{t('applyJob.title')}</h3>
+          <form onSubmit={handleSubmit(clickObj)} className=''>
+            <div className="row g-3">
+              <div className="col-md-6">
+                <label className='form-label'>{t('applyJob.fullName')}</label>
+                <input type="text" className="form-control" placeholder={t('applyJob.fullNamePlaceholder')} {...register('fullname',{required:"must be your full name"})}/>
+                {errors.fullname && <p className="text-danger small">{errors.fullname.message}</p>}
+              </div>
+              <div className="col-md-6">
+                <label className="form-label">{t('applyJob.experience')}</label>
+                <input className="form-control" placeholder={t('applyJob.experiencePlaceholder')} type="text" {...register('experience',{required:"must be above 1 year"})}/>
+                {errors.experience && <p className="text-danger small">{errors.experience.message}</p>}
+              </div>
+              <div className="col-md-6">
+                <label className="form-label">{t('applyJob.workingHours')}</label>
+                <select className="form-select" {...register('workinghours',{required:"working hours must be included"})}>
+                  <option value="">{t('applyJob.selectWorkingHours')}</option>
+                  <option value="part-time">{t('applyJob.partTime')}</option>
+                  <option value="full-time">{t('applyJob.fullTime')}</option>
+                </select>
+                {errors.workinghours && <p className="text-danger small">{errors.workinghours.message}</p>}
+              </div>
+              <div className="col-md-6">
+                <label className="form-label">{t('applyJob.skills')}</label>
+                <input className="form-control" placeholder={t('applyJob.skillsPlaceholder')} type="text" {...register('skills',{required:"must include your skills"})}/>
+                {errors.skills && <p className="text-danger small">{errors.skills.message}</p>}
+              </div>
+              <div className="col-md-12">
+                <label className="form-label">{t('applyJob.location')}</label>
+                <select className="form-select" {...register('location', { required: "Select correct details" })}>
+                  <option value="">{t('applyJob.selectState')}</option>
   
   <option value="AN">Andaman and Nicobar Islands</option>
   <option value="AN-PORTBLER">Port Blair</option>
@@ -187,14 +173,18 @@ console.log(state)
   
   <option value="WB">West Bengal</option>
   <option value="WB-KOLKATA">Kolkata</option>
-      </select>
-      {errors.location && <p className="text-danger">{errors.location.message}</p>}
-    </div>
-        <button type="submit" className='btn btn-success'>Submit</button>
-       </form>
+                </select>
+                {errors.location && <p className="text-danger small">{errors.location.message}</p>}
+              </div>
+            </div>
+            <div className="d-flex justify-content-end mt-4">
+              <button type="submit" className='btn btn-primary px-4'>{t('applyJob.submit')}</button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   )
 }
 
 export default ApplyJob
-

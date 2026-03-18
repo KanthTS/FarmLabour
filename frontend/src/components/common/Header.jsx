@@ -1,60 +1,92 @@
 import React, { useContext } from 'react'
 import {Link, useNavigate} from 'react-router-dom'
-import {useClerk, useUser} from '@clerk/clerk-react'
 import { createObj } from '../contexts/FarmerLabourContext'
+import { useTranslation } from 'react-i18next'
+import { MdLanguage } from 'react-icons/md'
+
 function Header() {
-   const {signOut}=useClerk()
-   const {currentUser,setCurrentUser}=useContext(createObj)
-   const {isSignedIn,user,isLoaded}=useUser()
+   const {currentUser,logout}=useContext(createObj)
    const nav=useNavigate()
-   console.log(isLoaded);
-   console.log(isSignedIn);
-   console.log(user)
-   async function signedOut(){
-        setCurrentUser(null)
+   const { t, i18n } = useTranslation()
+
+   function signedOut(){
+        logout()
         nav('/')
-        await signOut()
    }
   return (
  
   <div className="bg-black">
     <div className="d-flex justify-content-between m-3  header">
-      <div>
-      <ul >
-        <li className="nav-link m-2 text-white" style={{fontSize:"25px",marginTop:"10px"}}>Farm Labour</li>
-      </ul>
-      
-      </div>
-      <div >
-       {
-        !isSignedIn?<>
-         <ul className="d-flex "style={{fontSize:"16px",marginTop:"10px"}}>
-          <li className="nav-link m-2 px-4 ">
-            <Link to="/"className="u" >Home</Link>
-          </li>
-          <li className="nav-link m-2 px-4 ">
-            <Link to="howitworks"className="u" >How It Works</Link>
-          </li>
-          {/* <li className="nav-link m-2 px-4 ">
-            <Link to="joblistings"className="u" >Job Listings</Link>
-          </li> */}
-          <li className="nav-link m-2 px-4 ">
-            <Link to="about"className="u" >About</Link>
-          </li>
-          <li className="nav-link m-2 px-4">
-            <Link to="signin" className="u">SignIn</Link>
-          </li>
-          <li className="nav-link m-2 px-4">
-            <Link to="signup" className="u">SignUp</Link>
-          </li>
+      <div className="d-flex align-items-center gap-4">
+        <span className="nav-link m-2 text-white" style={{fontSize:"22px"}}>{t('app.name')}</span>
+        <ul className="d-flex m-0 p-0" style={{fontSize:"14px"}}>
+          <li className="nav-link m-2 px-3 "><Link to="/"className="u" >{t('nav.home')}</Link></li>
+          <li className="nav-link m-2 px-3 "><Link to="howitworks"className="u" >{t('nav.howItWorks')}</Link></li>
+          <li className="nav-link m-2 px-3 "><Link to="about"className="u" >{t('nav.about')}</Link></li>
         </ul>
+      </div>
+      <div className="d-flex align-items-center">
+       {
+        !currentUser?<>
+         <div className="d-flex align-items-center gap-2">
+            <div className="input-group input-group-sm" style={{ width: '170px' }}>
+              <span className="input-group-text bg-dark text-white border-secondary">
+                <MdLanguage />
+              </span>
+              <select
+                className="form-select bg-dark text-white border-secondary"
+                value={i18n.language}
+                onChange={(e)=>i18n.changeLanguage(e.target.value)}
+                aria-label={t('nav.language')}
+              >
+                <option value="en">English</option>
+                <option value="hi">हिन्दी</option>
+                <option value="te">తెలుగు</option>
+              </select>
+            </div>
+            <Link to="signin" className="btn btn-outline-light btn-sm">{t('nav.signIn')}</Link>
+            <Link to="signup" className="btn btn-warning btn-sm">{t('nav.signUp')}</Link>
+         </div>
         </>:<>
-          <div className="d-flex ">
-          <img src={user.imageUrl} width="40px" className="m-1"/>
-            <p className='text-white m-4 fs-5'>{user.firstName}</p>
-          
+          <div className="d-flex align-items-center text-white gap-3">
+            {currentUser?.role==='admin' && (
+              <Link to="/admin" className="text-white">{t('nav.admin')}</Link>
+            )}
+            <div className="input-group input-group-sm" style={{ width: '170px' }}>
+              <span className="input-group-text bg-dark text-white border-secondary">
+                <MdLanguage />
+              </span>
+              <select
+                className="form-select bg-dark text-white border-secondary"
+                value={i18n.language}
+                onChange={(e)=>i18n.changeLanguage(e.target.value)}
+                aria-label={t('nav.language')}
+              >
+                <option value="en">English</option>
+                <option value="hi">हिन्दी</option>
+                <option value="te">తెలుగు</option>
+              </select>
+            </div>
+            {(() => {
+              const email = currentUser?.email || 'U'
+              const nameFromEmail = email.split('@')[0] || 'U'
+              const avatarText = encodeURIComponent(nameFromEmail)
+              const src = currentUser?.profileImageUrl
+                ? currentUser.profileImageUrl
+                : `https://ui-avatars.com/api/?name=${avatarText}`
+              return (
+                <img
+                  src={src}
+                  alt="Profile"
+                  width="40"
+                  height="40"
+                  className="m-1 rounded-circle"
+                />
+              )
+            })()}
+            <p className='m-0 fs-6'>{currentUser?.firstName}</p>
+            <button type="button" className='btn btn-warning btn-sm' onClick={signedOut}>{t('nav.signOut')}</button>
           </div>
-          <button type="button" className='btn btn-warning 'onClick={signedOut} style={{position:"relative",left:"50%"}}>Signout</button>
         </>
        }
       </div>

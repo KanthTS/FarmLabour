@@ -1,0 +1,40 @@
+/* Global UI polish (profile onwards) */
+:root{
+  --fl-radius: 16px;
+}
+
+body{
+  background: #f6f8fb;
+}
+
+.fl-page{
+  padding: 1.25rem 0;
+}
+
+.fl-card{
+  border: 0;
+  border-radius: var(--fl-radius);
+  box-shadow: 0 10px 24px rgba(0,0,0,.06);
+}
+
+.fl-card-hover{
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.fl-card-hover:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(0,0,0,.08);
+}
+
+.fl-section-title{
+  font-weight: 700;
+  letter-spacing: .2px;
+}
+
+.fl-muted{
+  color: rgba(0,0,0,.6);
+}
+
+.fl-pill-nav a{
+  text-decoration: none;
+}
+

@@ -1,13 +1,14 @@
 import React, { useContext, useEffect ,useState} from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { createObj } from '../contexts/FarmerLabourContext';
-import axios from 'axios';
 import { useForm } from 'react-hook-form';
-import image from '/Users/lakshmikanth/Farmers and Labourers/frontend/src/images/modern-background-social-media-icons_1017-4839.jpg'
+import client from '../../api/client';
+import { useTranslation } from 'react-i18next'
 
 function JobById() {
   const { currentUser, setCurrentUser } = useContext(createObj);
   const nav = useNavigate();
+  const { t } = useTranslation()
   const [date,setDate]=useState('')
   const {register,handleSubmit,formState:{errors}}=useForm()
 const [editStatus,setEditStatus]=useState(false)
@@ -31,9 +32,9 @@ const [editStatus,setEditStatus]=useState(false)
      const d=new Date();
      changes.DateOfModification=d.getDate()+"_"+d.getMonth()+"_"+d.getFullYear()   
      console.log("changes",changes)
-     let res=await axios.put(`http://localhost:3000/farmer-api/job/${changes._id}`,changes)
+     let res=await client.patch(`/jobs/${changes._id}`,changes)
      console.log("message",res.data.message)
-     if(res.data.message==='job details updated')
+     if(res.data.message==='job updated')
      {
       setEditStatus(false)
       nav(`/farmerprofile/${currentUser.email}/${state.jobId}`,{state:changes})
@@ -42,21 +43,23 @@ const [editStatus,setEditStatus]=useState(false)
   }
 console.log("state",state)
   async function deleteJob(){
-    state.isJobActive=false;
-    let res=await axios.put(`http://localhost:3000/farmer-api/jobs/${state._id}`,state)
-     if(res.data.message==="job details deleted"){
-         setCJob(res.data.payload)
-         nav(`/farmerprofile/${currentUser.email}/jobs`)
-     }
+    let res=await client.patch(`/jobs/${state._id}/close`)
+    if(res.data.message==="job closed"){
+        setCJob(res.data.payload)
+        nav(`/farmerprofile/${currentUser.email}/jobs`)
+    }
   }
 
   function onclick(){
+    if(!currentUser){
+      nav('/signin')
+      return
+    }
     const obj=state._id
-    console.log(obj)
     nav(`/labourprofile/${currentUser.email}/apply`,{state:obj})
   }
   return (
-    <div>
+    <div className="fl-page">
       {
         editStatus === false ?
         <>
@@ -64,82 +67,109 @@ console.log("state",state)
         {currentUser.role === 'farmer' ? (
         <>
            
-          <div className="card container" style={{ backgroundColor: "lightblue" }}>
+          <div className="container">
+          <div className="card fl-card">
 
-            <div className="card-header d-flex justify-content-between">
-              <button type="submit"className="btn btn-success " style={{}} onClick={onEdit}>Edit</button>
-              <button type="submit"className="btn btn-success " style={{}} onClick={deleteJob}>Delete</button>
-              
-              <h5 className="lead" style={{ color: "tan", padding: "20px", fontFamily: "sans-serif", fontSize: "25px" }}>
-                {state.title}
-              </h5>
+            <div className="card-header bg-white d-flex flex-wrap gap-2 justify-content-between align-items-center">
+              <div className="d-flex gap-2">
+                <button type="button"className="btn btn-success " onClick={onEdit}>Edit</button>
+                <button type="button"className="btn btn-secondary " onClick={()=>nav(`/farmerprofile/${currentUser.email}/app`,{state:{jobId:state._id}})}>Applications</button>
+                <button type="button"className="btn btn-danger " onClick={deleteJob}>Close</button>
+              </div>
+              <div className="text-center flex-grow-1">
+                <div className="fl-section-title">
+                  {(() => {
+                    const raw = state.title || ''
+                    const key = raw.toLowerCase().trim().replace(/\s+/g,'_')
+                    return t(`crops.${key}`, { defaultValue: raw })
+                  })()}
+                </div>
+                <div className="small fl-muted">
+                  {[
+                    state.village,
+                    state.mandal,
+                    state.city,
+                    state.location
+                  ].filter(Boolean).join(', ')}{state.zipcode ? ` • ${state.zipcode}` : ''}
+                </div>
+              </div>
               
               <div>
-                <img src={state.farmerData.profileImageUrl} width="40px" />
-                <p className="lead">{state.farmerData.nameOfFarmer}</p>
+                <img src={state.farmerData.profileImageUrl} width="40px" height="40px" className="rounded-circle" />
+                <div className="small fl-muted text-end">{state.farmerData.nameOfFarmer}</div>
               </div>
             </div>
-            <div className="card-body" style={{ backgroundColor: "wheat" }}>
-              <h5>Content:</h5>
-              <p className="lead text-start">{state.content}</p>
-              <h5>Field Size:</h5>
-              <p className="lead">I have nearly <span className="text-primary" style={{ border: "solid 1px", borderRadius: "50%", padding: "5px" }}>{state.fieldSize}</span> acres of field</p>
-              <h5>Wages:</h5>
-              <p className="lead">I will pay nearly <span className="text-danger">₹{state.wages}</span> Rupees per day</p>
-              <h5>Start Date:</h5>
-              <p>The starting Date from <span className="text-danger">{state.startDate}</span></p>
-              <h5>End Date:</h5>
-              <p>The ending Date from <span className="text-danger">{state.endDate}</span></p>
-              <h5>ZipCode:</h5>
-              <p className="text-success">{state.zipcode}</p>
-              <h5>Timings:</h5>
-              <p className="text-success">{state.Timings}</p>
-            </div>
-            <div className="card-footer">
-              <div className="d-flex justify-content-between">
-                <p>Created on.. {state.DateOfCreation}</p>
-                <button className="text-success text-center" >Apply Now</button>
-                <p>Modified on.. {state.DateOfModification}</p>
+            <div className="card-body bg-white">
+              <div className="row">
+                <div className="col-md-8">
+                  <div className="fl-section-title mb-2">About the work</div>
+                  <p className="text-secondary">{state.content}</p>
+                  <div className="mt-3 d-flex flex-wrap gap-2">
+                    <span className="badge text-bg-success">₹{state.wages}/day</span>
+                    <span className="badge text-bg-light border">Field: {state.fieldSize} </span>
+                    <span className="badge text-bg-light border">Workers: {state.workersNeeded}</span>
+                    <span className="badge text-bg-light border">Timing: {state.Timings}</span>
+                    <span className="badge text-bg-light border">Zip: {state.zipcode}</span>
+                    <span className="badge text-bg-light border">
+                      {[
+                        state.village,
+                        state.mandal,
+                        state.city,
+                        state.location
+                      ].filter(Boolean).join(', ')}
+                    </span>
+                  </div>
+                </div>
+                <div className="col-md-4">
+                  <div className="card fl-card">
+                    <div className="card-body">
+                      <h6 className="text-muted">Schedule</h6>
+                      <div className="fw-semibold">Start: {new Date(state.startDate).toLocaleDateString()}</div>
+                      <div className="fw-semibold">End: {new Date(state.endDate).toLocaleDateString()}</div>
+                      <div className="mt-3 text-muted small">Created {state.DateOfCreation}</div>
+                      <div className="text-muted small">Updated {state.DateOfModification}</div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
+          </div>
           </div>
         </>
       ) : (
         <>
       
-          <div className="card container" style={{ backgroundColor: "lightblue" }}>
-            <div className="card-header d-flex justify-content-between">
-              <h5 className="lead" style={{ color: "tan", padding: "20px", fontFamily: "sans-serif", fontSize: "25px" }}>
-                {state.title}
-              </h5>
-              <div>
-                <img src={state.farmerData.profileImageUrl} width="40px" />
-                <p className="lead">{state.farmerData.nameOfFarmer}</p>
+          <div className="container">
+          <div className="card fl-card">
+            <div className="card-header bg-white d-flex justify-content-between align-items-center">
+              <div className="fl-section-title">
+                {(() => {
+                  const raw = state.title || ''
+                  const key = raw.toLowerCase().trim().replace(/\s+/g,'_')
+                  return t(`crops.${key}`, { defaultValue: raw })
+                })()}
+              </div>
+              <button className="btn btn-success" onClick={onclick}>{t('jobs.applyNow')}</button>
+            </div>
+            <div className="card-body bg-white">
+              <p className="text-secondary">{state.content}</p>
+              <div className="d-flex flex-wrap gap-2">
+                <span className="badge text-bg-success">₹{state.wages}/day</span>
+                <span className="badge text-bg-light border">Field: {state.fieldSize}</span>
+                <span className="badge text-bg-light border">Workers: {state.workersNeeded}</span>
+                <span className="badge text-bg-light border">Timing: {state.Timings}</span>
+                <span className="badge text-bg-light border">Zip: {state.zipcode}</span>
+                <span className="badge text-bg-light border">
+                  {[
+                    state.village,
+                    state.mandal,
+                    state.city,
+                    state.location
+                  ].filter(Boolean).join(', ')}
+                </span>
               </div>
             </div>
-            <div className="card-body" style={{ backgroundColor: "wheat" }}>
-              <h5>Content:</h5>
-              <p className="lead text-start">{state.content}</p>
-              <h5>Field Size:</h5>
-              <p className="lead">I have nearly <span className="text-primary" style={{ border: "solid 1px", borderRadius: "50%", padding: "5px" }}>{state.fieldSize}</span> acres of field</p>
-              <h5>Wages:</h5>
-              <p className="lead">I will pay nearly <span className="text-danger">₹{state.wages}</span> Rupees per day</p>
-              <h5>Start Date:</h5>
-              <p>The starting Date from <span className="text-danger">{new Date(state.startDate).toISOString().split('T')[0]}</span></p>
-              <h5>End Date:</h5>
-              <p>The ending Date from <span className="text-danger">{new Date(state.endDate).toISOString().split('T')[0]}</span></p>
-              <h5>ZipCode:</h5>
-              <p className="text-success">{state.zipcode}</p>
-              <h5>Timings:</h5>
-              <p className="text-success">{state.Timings}</p>
-            </div>
-            <div className="card-footer">
-              <div className="d-flex justify-content-between">
-                <p>Created on.. {state.DateOfCreation}</p>
-                <button className="text-success text-center" onClick={onclick}>Apply Now</button>
-                <p>Modified on.. {state.DateOfModification}</p>
-              </div>
-            </div>
+          </div>
           </div>
         </>
       )}
@@ -147,41 +177,42 @@ console.log("state",state)
         </>:
 
         <>
-         <img src={image} width="100%" height="1000px"/>
-        <div style={{position:"absolute",left:"30%",top:"45%"}}>
-  
-  <form onSubmit={handleSubmit(onSave)} className="form-control text-center " style={{backgroundColor:"transparent"}}>
-    <h4 className="text-center text-white">Edit Form</h4>
+        <div className="container">
+        <div className="card fl-card">
+        <div className="card-body">
+  <form onSubmit={handleSubmit(onSave)}>
+    <div className="d-flex justify-content-between align-items-center mb-3">
+      <div className="fl-section-title">Edit Job</div>
+      <button type="submit" className="btn btn-success">Save</button>
+    </div>
     <div>
-      <label htmlFor="title" className="text-white fs-5">Title:</label>
+      <label htmlFor="title" className="form-label">Title</label>
       <input
       placeholder='Enter a Title'
         type="text"
         defaultValue={state.title}
         id="title"
         name="title"
-        className="m-3 w-50 text-white"
-        style={{backgroundColor:"transparent",border:"solid 1px red"}}
+        className="form-control"
         {...register('title', { required: "Enter correct details" })}
       />
-      {errors.title && <p className="text-danger"> {errors.title.message}</p>}
+      {errors.title && <p className="text-danger small mt-1"> {errors.title.message}</p>}
     </div>
     <div>
-      <label htmlFor="content" className="text-white fs-5">Content:</label>
-      <input
-        type="text"
+      <label htmlFor="content" className="form-label mt-3">Content</label>
+      <textarea
         defaultValue={state.content}
         id="content"
         placeholder='Enter a content'
         name="content"
-         className="m-3 w-50  text-white"
-         style={{backgroundColor:"transparent",border:"solid 1px red"}}
+         className="form-control"
         {...register('content', { required: "Enter valid details" })}
-      />
-      {errors.content && <p className="text-danger">{errors.content.message}</p>}
+      ></textarea>
+      {errors.content && <p className="text-danger small mt-1">{errors.content.message}</p>}
     </div>
-    <div>
-      <label htmlFor="wages" className="text-white fs-5">Wages:</label>
+    <div className="row g-3 mt-1">
+    <div className="col-md-6">
+      <label htmlFor="wages" className="form-label">Wages</label>
       <input
        defaultValue={state.wages}
         type="number"
@@ -191,14 +222,13 @@ console.log("state",state)
         min="100"
         max="100000"
         step="100"
-        style={{backgroundColor:"transparent",border:"solid 1px red"}}
         {...register('wages', { required: "Enter positive numbers" })}
-         className="m-3 w-50  text-white "
+         className="form-control"
       />
-      {errors.wages && <p className="text-danger">{errors.wages.message}</p>}
+      {errors.wages && <p className="text-danger small mt-1">{errors.wages.message}</p>}
     </div>
-    <div>
-      <label htmlFor="fieldSize" className="text-white fs-5">FieldSize:</label>
+    <div className="col-md-6">
+      <label htmlFor="fieldSize" className="form-label">Field Size</label>
       <input
         type="number"
         defaultValue={state.fieldSize}
@@ -207,14 +237,13 @@ console.log("state",state)
         min="1"
         max="100"
         placeholder="How many acres of land"
-         className="m-3 w-50  text-white"
-         style={{backgroundColor:"transparent",border:"solid 1px red"}}
+         className="form-control"
         {...register('fieldSize', { required: "FieldSize is required" })}
       />
-      {errors.fieldSize && <p className="text-danger">{errors.fieldSize.message}</p>}
+      {errors.fieldSize && <p className="text-danger small mt-1">{errors.fieldSize.message}</p>}
     </div>
-    <div>
-      <label htmlFor="startdate" className="text-white fs-5">StartDate:</label>
+    <div className="col-md-6">
+      <label htmlFor="startdate" className="form-label">Start Date</label>
       <input
       placeholder="dd/mm/yy"
       defaultValue={state.startdate}
@@ -222,35 +251,32 @@ console.log("state",state)
         id="startdate"
         name="startdate"
         min={date}
-         className="m-3 w-50  text-white"
-         style={{backgroundColor:"transparent",border:"solid 1px red"}}
+         className="form-control"
         {...register('startDate', { required: "StartDate is required" })}
       />
-      {errors.start && <p className="text-danger">{errors.start.message}</p>}
+      {errors.start && <p className="text-danger small mt-1">{errors.start.message}</p>}
      
     </div>
-    <div>
-      <label htmlFor="enddate" className="text-white fs-5">EndDate:</label>
+    <div className="col-md-6">
+      <label htmlFor="enddate" className="form-label">End Date</label>
       <input
         type="date"
         id="enddate"
         name="enddate"
         min={date}
         defaultValue={state.enddate}
-         className="m-3 w-50  text-white"
-         style={{backgroundColor:"transparent",border:"solid 1px red"}}
+         className="form-control"
         {...register('endDate', { required: "EndDate is required" })}
       />
-      {errors.enddate && <p className="text-danger">{errors.enddate.message}</p>}
+      {errors.enddate && <p className="text-danger small mt-1">{errors.enddate.message}</p>}
     </div>
-    <div>
-      <label htmlFor="location" className="text-white fs-5">Location:</label>
+    <div className="col-md-6">
+      <label htmlFor="location" className="form-label">Location</label>
       <select
         id="location"
         name="location"
         defaultValue={state.location}
-         className="m-3 w-50  text-white"
-         style={{backgroundColor:"transparent",border:"solid 1px red"}}
+         className="form-select"
         {...register('location', { required: "Select correct details" })}
       >
          <option value="">Select a state</option>
@@ -361,27 +387,24 @@ console.log("state",state)
       {errors.location && <p className="text-danger">{errors.location.message}</p>}
     </div>
     
-    <div>
-      <label htmlFor="zipcode" className="text-white fs-5">ZipCode:</label>
-      <input type="number"  defaultValue={state.zipcode} placeholder="XXXXXX"  id="zipcode" name="zipcode" min="100000" max="999999" {...register('zipcode',{required:"must have 6-digits"})} className="m-3 w-50  text-white" style={{backgroundColor:"transparent",border:"solid 1px red"}}/>
-      {errors.zipcode && <p className="text-danger">{errors.zipcode.message}</p>}
+    <div className="col-md-6">
+      <label htmlFor="zipcode" className="form-label">Zip Code</label>
+      <input type="number"  defaultValue={state.zipcode} placeholder="XXXXXX"  id="zipcode" name="zipcode" min="100000" max="999999" {...register('zipcode',{required:"must have 6-digits"})} className="form-control"/>
+      {errors.zipcode && <p className="text-danger small mt-1">{errors.zipcode.message}</p>}
     </div>
-    <div>
-      <label htmlFor="timings" className="text-white fs-5">
-        Timings:
-      </label>
-      <select id="Timings" defaultValue={state.Timings}{...register('Timings',{required:"timings are required"})} className="m-3 w-50  text-white" style={{backgroundColor:"transparent",border:"solid 1px red"}}>
+    <div className="col-md-6">
+      <label htmlFor="timings" className="form-label">Timings</label>
+      <select id="Timings" defaultValue={state.Timings}{...register('Timings',{required:"timings are required"})} className="form-select">
         <option value="select">Select a option</option>
-        <option value="8 A.M.-5 P.M.">8 A.M.-5 P.M. </option>
-        <option value="10 A.M.-5P.M.">10 A.M.-5P.M. </option>
+        <option value="8 A.M.-5 P.M.">8 A.M.-5 P.M.</option>
+        <option value="10 A.M.-5P.M.">10 A.M.-5P.M.</option>
       </select>
     </div>
-
-    <button type="submit" className="btn btn-success" >save</button>
+    </div>
   </form>
-  </div>
-
-
+        </div>
+        </div>
+        </div>
         </>
       }
       
