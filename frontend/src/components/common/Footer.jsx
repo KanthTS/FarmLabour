@@ -1,10 +1,23 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { Link } from 'react-router-dom'
+import { motion } from 'framer-motion'
+import {
+  MdEmail,
+  MdPhone,
+  MdSchedule,
+  MdCheckCircle,
+  MdAgriculture,
+} from 'react-icons/md'
+import { useTranslation } from 'react-i18next'
 import client from '../../api/client'
+import './Footer.css'
 
 function Footer() {
-  const { register, handleSubmit, formState:{ errors } } = useForm()
+  const { register, handleSubmit } = useForm()
   const [submitted, setSubmitted] = useState(false)
+  const { t } = useTranslation()
+  const year = new Date().getFullYear()
 
   async function contacting(values) {
     try {
@@ -12,103 +25,158 @@ function Footer() {
       if (res.data.message === 'contact') {
         setSubmitted(true)
       }
-    } catch (e) {
-      // keep footer silent on error for now
+    } catch {
+      // silent for now
     }
   }
 
-  const year = new Date().getFullYear()
-
   return (
-    <footer className="mt-5 bg-dark text-light">
-      <div className="container py-5">
-        {submitted ? (
-          <div className="text-center py-4">
-            <h3 className="mb-2">Thank you for contacting us!</h3>
-            <p className="text-secondary mb-0">We’ve received your message and will get back to you shortly.</p>
-          </div>
-        ) : (
-          <div className="row g-4 align-items-start">
-            <div className="col-md-5">
-              <h4 className="fw-bold">Need help with hiring or work?</h4>
-              <p className="text-secondary mt-2">
-                Reach out and our team will assist you with using the platform, job postings, and worker applications.
-              </p>
-              <div className="mt-4">
-                <div className="mb-2">
-                  <div className="text-uppercase text-secondary small">Email</div>
-                  <div className="fw-semibold">usagemail1234@gmail.com</div>
-                </div>
-                <div className="mb-2">
-                  <div className="text-uppercase text-secondary small">Phone</div>
-                  <div className="fw-semibold">+91 9XXXXXXXXX</div>
-                </div>
-                <div className="mb-2">
-                  <div className="text-uppercase text-secondary small">Hours</div>
-                  <div className="fw-semibold">10:00 AM – 5:00 PM (IST)</div>
-                </div>
-              </div>
-            </div>
+    <footer className="site-footer">
+      <div className="site-footer__top-glow" aria-hidden />
+      <div className="site-footer__orb site-footer__orb--1" aria-hidden />
+      <div className="site-footer__orb site-footer__orb--2" aria-hidden />
 
-            <div className="col-md-7">
-              <div className="card bg-dark border-0 shadow-sm">
-                <div className="card-body">
-                  <h5 className="mb-3">Quick contact</h5>
-                  <form onSubmit={handleSubmit(contacting)}>
-                    <div className="row g-3">
-                      <div className="col-md-6">
-                        <label className="form-label">First Name</label>
-                        <input
-                          className="form-control bg-black text-light border-secondary"
-                          placeholder="e.g. Ramu"
-                          {...register('firstName')}
-                        />
-                      </div>
-                      <div className="col-md-6">
-                        <label className="form-label">Last Name</label>
-                        <input
-                          className="form-control bg-black text-light border-secondary"
-                          placeholder="e.g. Naik"
-                          {...register('lastName')}
-                        />
-                      </div>
-                      <div className="col-12">
-                        <label className="form-label">Email</label>
-                        <input
-                          type="email"
-                          className="form-control bg-black text-light border-secondary"
-                          placeholder="you@example.com"
-                          {...register('email')}
-                        />
-                      </div>
-                      <div className="col-12">
-                        <label className="form-label">Message</label>
-                        <textarea
-                          className="form-control bg-black text-light border-secondary"
-                          rows={3}
-                          placeholder="Tell us how we can help..."
-                          {...register('message')}
-                        />
-                      </div>
-                      <div className="col-12">
-                        <button type="submit" className="btn btn-warning w-100 mt-2">
-                          Send message
-                        </button>
-                      </div>
-                    </div>
-                  </form>
+      <div className="site-footer__inner">
+        {submitted ? (
+          <motion.div
+            className="site-footer__thanks site-footer__glass"
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+          >
+            <div className="site-footer__thanks-icon">
+              <MdCheckCircle />
+            </div>
+            <h3>Thank you for reaching out!</h3>
+            <p>We&apos;ve received your message and will get back to you shortly.</p>
+          </motion.div>
+        ) : (
+          <div className="site-footer__grid">
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
+              <div className="d-flex align-items-center gap-2 mb-2">
+                <MdAgriculture className="text-success fs-4" />
+                <span className="site-footer__brand-title">{t('app.name')}</span>
+              </div>
+              <p className="site-footer__brand-desc">
+                Empowering farmers and labourers across rural India with smart hiring,
+                transparent wages, and trusted connections.
+              </p>
+              <div className="site-footer__badges">
+                <span className="site-footer__badge">🌾 Agriculture first</span>
+                <span className="site-footer__badge">✓ Verified network</span>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.08 }}
+            >
+              <h4 className="site-footer__heading">Quick links</h4>
+              <ul className="site-footer__links">
+                <li><Link to="/signup">Create account</Link></li>
+                <li><Link to="/signin">Sign in</Link></li>
+                <li><Link to="/#how-it-works">How it works</Link></li>
+              </ul>
+
+              <h4 className="site-footer__heading mt-4">Contact</h4>
+              <div className="site-footer__contact-item">
+                <div className="site-footer__contact-icon"><MdEmail /></div>
+                <div>
+                  <strong>Email</strong>
+                  <span>usagemail1234@gmail.com</span>
                 </div>
               </div>
-            </div>
+              <div className="site-footer__contact-item">
+                <div className="site-footer__contact-icon"><MdPhone /></div>
+                <div>
+                  <strong>Phone</strong>
+                  <span>+91 9XXXXXXXXX</span>
+                </div>
+              </div>
+              <div className="site-footer__contact-item">
+                <div className="site-footer__contact-icon"><MdSchedule /></div>
+                <div>
+                  <strong>Hours</strong>
+                  <span>10:00 AM – 5:00 PM (IST)</span>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              className="site-footer__form-wrap"
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.16 }}
+            >
+              <div className="site-footer__glass">
+                <h5 className="site-footer__form-title">Quick contact</h5>
+                <p className="site-footer__form-sub">
+                  Questions about jobs, hiring, or your account? Send us a message.
+                </p>
+                <form onSubmit={handleSubmit(contacting)}>
+                  <div className="site-footer__row">
+                    <div className="site-footer__field">
+                      <label htmlFor="footer-first">First name</label>
+                      <input
+                        id="footer-first"
+                        placeholder="e.g. Ramu"
+                        {...register('firstName')}
+                      />
+                    </div>
+                    <div className="site-footer__field">
+                      <label htmlFor="footer-last">Last name</label>
+                      <input
+                        id="footer-last"
+                        placeholder="e.g. Naik"
+                        {...register('lastName')}
+                      />
+                    </div>
+                  </div>
+                  <div className="site-footer__field">
+                    <label htmlFor="footer-email">Email</label>
+                    <input
+                      id="footer-email"
+                      type="email"
+                      placeholder="you@example.com"
+                      {...register('email')}
+                    />
+                  </div>
+                  <div className="site-footer__field">
+                    <label htmlFor="footer-msg">Message</label>
+                    <textarea
+                      id="footer-msg"
+                      rows={3}
+                      placeholder="Tell us how we can help..."
+                      {...register('message')}
+                    />
+                  </div>
+                  <button type="submit" className="site-footer__submit">
+                    Send message
+                  </button>
+                </form>
+              </div>
+            </motion.div>
           </div>
         )}
       </div>
-      <div className="border-top border-secondary text-center py-3 small text-secondary">
-        © {year} Farm Labour. All rights reserved.
+
+      <div className="site-footer__bottom">
+        <p className="site-footer__copyright mb-0">
+          © {year} {t('app.name')}. All rights reserved.
+        </p>
+        <p className="site-footer__tagline mb-0">
+          Connecting farmers with skilled labour · Built for rural India
+        </p>
       </div>
     </footer>
   )
 }
 
 export default Footer
-

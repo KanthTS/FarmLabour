@@ -30,20 +30,20 @@ import JobHistory from './components/labour/JobHistory.jsx'
 import LabourMe from './components/labour/LabourMe.jsx'
 const browserObj=createBrowserRouter([
   {
+    path:'/signin',
+    element:<Signin/>
+  },
+  {
+    path:'/signup',
+    element:<SignUp/>
+  },
+  {
     path:'/',
     element:<RootLayout/>,
     children:[
       {
           path:'',
           element:<Home/>
-      },
-      {
-         path:'signin',
-         element:<Signin/>
-      },
-      {
-          path:'signup',
-          element:<SignUp/>
       },
       {
         path:'howitworks',

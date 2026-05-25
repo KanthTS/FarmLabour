@@ -15,11 +15,13 @@ const messageApp=require('./Apis/messageApi')
 const reviewApp=require('./Apis/reviewApi')
 const notifApp=require('./Apis/notificationApi')
 const paymentApp=require('./Apis/paymentApi')
+const publicApp=require('./Apis/publicApi')
 
 const app=exp()
 app.use(cors())
 app.use(exp.json())
 
+app.use('/public',publicApp)
 app.use('/auth',authApp)
 app.use('/farmer-api',farmerApp)
 app.use('/labour-api',labourApp)

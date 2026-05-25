@@ -17,13 +17,8 @@ function Header() {
  
   <div className="bg-black">
     <div className="d-flex justify-content-between m-3  header">
-      <div className="d-flex align-items-center gap-4">
-        <span className="nav-link m-2 text-white" style={{fontSize:"22px"}}>{t('app.name')}</span>
-        <ul className="d-flex m-0 p-0" style={{fontSize:"14px"}}>
-          <li className="nav-link m-2 px-3 "><Link to="/"className="u" >{t('nav.home')}</Link></li>
-          <li className="nav-link m-2 px-3 "><Link to="howitworks"className="u" >{t('nav.howItWorks')}</Link></li>
-          <li className="nav-link m-2 px-3 "><Link to="about"className="u" >{t('nav.about')}</Link></li>
-        </ul>
+      <div className="d-flex align-items-center">
+        <Link to="/" className="nav-link m-2 text-white text-decoration-none" style={{fontSize:"22px"}}>{t('app.name')}</Link>
       </div>
       <div className="d-flex align-items-center">
        {
