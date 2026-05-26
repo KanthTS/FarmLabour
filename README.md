@@ -1,7 +1,7 @@
 # FarmLabour
  *Bridging the Gap Between Farmers and Agricultural Laborers: A Digital Platform for Job Matching*  
 <img width="1536" height="1024" alt="ChatGPT Image May 26, 2026, 05_33_12 PM" src="https://github.com/user-attachments/assets/99a6b3c9-98bc-45c6-b90c-640a19d4c539" />
-<img width="1536" height="1024" alt="ChatGPT Image May 26, 2026, 05_33_12 PM" src="https://github.com/user-attachments/assets/e7ffff5e-939f-411c-8ead-b2490f5d641d" />
+<img width="1536" height="1024" alt="ChatGPT Image May 26, 2026, 05_33_12 PM" src="https://github.com/user-attachments/assets/b5b8e9a0-d344-43ab-b6a7-e3f6cf4f355b" />
 
 
 I'm currently developing it.It is farmLabour Job portal.
