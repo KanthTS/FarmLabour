@@ -17,11 +17,24 @@ const [editStatus,setEditStatus]=useState(false)
   const state = loc.state;
   console.log('Job ID from state:', state);
   const [cJob,setCJob]=useState(state)
+  const [hasApplied, setHasApplied] = useState(false)
+  const [checkingApply, setCheckingApply] = useState(false)
+
   useEffect(()=>{
     const today=new Date().toISOString().split('T')[0];
     setDate(today)
-   
   },[])
+
+  useEffect(() => {
+    const jobMongoId = state?._id
+    if (currentUser?.role !== 'labour' || !jobMongoId) return
+    setCheckingApply(true)
+    client
+      .get(`/jobs/${jobMongoId}/applied`)
+      .then((res) => setHasApplied(Boolean(res.data?.applied)))
+      .catch(() => setHasApplied(false))
+      .finally(() => setCheckingApply(false))
+  }, [state?._id, currentUser?.role])
    function onEdit(){
     
     setEditStatus(true)
@@ -55,8 +68,10 @@ console.log("state",state)
       nav('/signin')
       return
     }
-    const obj=state._id
-    nav(`/labourprofile/${currentUser.email}/apply`,{state:obj})
+    if (hasApplied) return
+    nav(`/labourprofile/${currentUser.email}/apply`, {
+      state: { jobId: state._id, job: state },
+    })
   }
   return (
     <div className="fl-page">
@@ -149,7 +164,13 @@ console.log("state",state)
                   return t(`crops.${key}`, { defaultValue: raw })
                 })()}
               </div>
-              <button className="btn btn-success" onClick={onclick}>{t('jobs.applyNow')}</button>
+              {checkingApply ? (
+                <span className="badge text-bg-secondary">Checking…</span>
+              ) : hasApplied ? (
+                <span className="badge text-bg-success">Already Applied</span>
+              ) : (
+                <button className="btn btn-success" onClick={onclick}>{t('jobs.applyNow')}</button>
+              )}
             </div>
             <div className="card-body bg-white">
               <p className="text-secondary">{state.content}</p>

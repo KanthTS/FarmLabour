@@ -1,272 +1,336 @@
-import React,{useContext,useEffect,useState} from 'react'
-import {useNavigate} from 'react-router-dom'
-import { createObj } from '../contexts/FarmerLabourContext';
-import {useForm} from 'react-hook-form'
+import React, { useContext, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { createObj } from '../contexts/FarmerLabourContext'
+import { useForm } from 'react-hook-form'
 import client from '../../api/client'
 import { useTranslation } from 'react-i18next'
-import { locationData } from '../../locationData'
+import {
+  SERVICE_STATE_CODE,
+  SERVICE_STATE_LABEL,
+  SERVICE_REGION_NOTE,
+  SERVICE_DISTRICT,
+  SERVICE_MANDAL,
+  getVillages,
+  getZipcode,
+  buildLocationLabel,
+  isServiceLocation,
+} from '../../locationData'
+import {
+  HiOutlineLocationMarker,
+  HiOutlineCalendar,
+  HiOutlineCurrencyRupee,
+  HiOutlineUsers,
+} from 'react-icons/hi'
+import './FarmerDashboard.css'
+import './CreatePost.css'
+
+const TIMING_OPTIONS = [
+  '10:00 AM – 5:00 PM',
+  '6:00 AM – 2:00 PM',
+  '7:00 AM – 4:00 PM',
+  '8:00 AM – 5:00 PM',
+  '6:00 AM – 6:00 PM (Full day)',
+  'Flexible / Discuss on call',
+]
 
 function CreatePost() {
-const nav=useNavigate()
-let [date,setDate]=useState('')
-const {register,handleSubmit,formState:{errors}, setValue}=useForm()
-const {currentUser}=useContext(createObj)
-const { t } = useTranslation()
-const [selectedState, setSelectedState] = useState('')
-const [selectedCity, setSelectedCity] = useState('')
-const [selectedMandal, setSelectedMandal] = useState('')
+  const nav = useNavigate()
+  const [minDate, setMinDate] = useState('')
+  const [district, setDistrict] = useState('')
+  const [mandal, setMandal] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const [formError, setFormError] = useState('')
 
-useEffect(()=>{
-  const today=new Date().toISOString().split('T')[0];
-  setDate(today)
-  if(!currentUser || currentUser.role!=='farmer'){
-    nav('/signin')
-  }
-},[currentUser])
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    watch,
+  } = useForm({
+    defaultValues: {
+      state: SERVICE_STATE_CODE,
+      Timings: TIMING_OPTIONS[0],
+    },
+  })
 
-function detailsOfpost(obj) {
-  const d = new Date();
+  const { currentUser } = useContext(createObj)
+  const { t } = useTranslation()
 
-  obj.farmerData = {
-    nameOfFarmer: currentUser.firstName,
-    email: currentUser.email,
-    profileImageUrl: currentUser.profileImageUrl || ""
-  };
+  const villages = getVillages(SERVICE_DISTRICT, SERVICE_MANDAL)
+  const selectedVillage = watch('village')
 
-  obj.reviewData = {
-    nameOfFarmer: currentUser.firstName,
-    rating: currentUser.rating || 5,
-    comment: currentUser.comment || "",
-    profileImageUrl: currentUser.profileImageUrl || ""
-  };
+  useEffect(() => {
+    setMinDate(new Date().toISOString().split('T')[0])
+    setDistrict(SERVICE_DISTRICT)
+    setMandal(SERVICE_MANDAL)
+    setValue('city', SERVICE_DISTRICT)
+    setValue('mandal', SERVICE_MANDAL)
+    if (!currentUser || currentUser.role !== 'farmer') {
+      nav('/signin')
+    }
+  }, [currentUser, nav, setValue])
 
-  obj.jobId = Date.now();
-  obj.DateOfCreation = d.toISOString();
-  obj.DateOfModification = obj.DateOfCreation;
-  obj.isJobActive = true;
+  useEffect(() => {
+    if (selectedVillage && district && mandal) {
+      const zip = getZipcode(district, mandal, selectedVillage)
+      if (zip) setValue('zipcode', zip)
+    }
+  }, [selectedVillage, district, mandal, setValue])
 
-  client
-    .post("/jobs", obj)
-    .then((res) => {
+  async function onSubmit(obj) {
+    setFormError('')
+
+    if (!isServiceLocation({ district, mandal, village: obj.village })) {
+      setFormError('Please select a village under Mantralayam mandal only.')
+      return
+    }
+
+    const payload = {
+      ...obj,
+      state: SERVICE_STATE_CODE,
+      city: district,
+      mandal,
+      village: obj.village,
+      location: buildLocationLabel({
+        village: obj.village,
+        mandal,
+        district,
+      }),
+      fieldSize: String(obj.fieldSize),
+      zipcode: Number(obj.zipcode),
+      farmerData: {
+        nameOfFarmer: currentUser.firstName,
+        email: currentUser.email,
+        profileImageUrl: currentUser.profileImageUrl || '',
+      },
+      reviewData: {
+        nameOfFarmer: currentUser.firstName,
+        rating: 5,
+        comment: '',
+        profileImageUrl: currentUser.profileImageUrl || '',
+      },
+    }
+
+    setSubmitting(true)
+    try {
+      const res = await client.post('/jobs', payload)
       if (res.status === 201) {
-        nav(`/farmerprofile/${currentUser.email}/jobs`);
+        nav(`/farmerprofile/${currentUser.email}/myjobs`)
       }
-    })
-    .catch((err) => {
-      const msg = err.response?.data?.message || 'Something went wrong while submitting the job!';
-      alert(msg);
-    });
+    } catch (err) {
+      setFormError(err.response?.data?.message || 'Something went wrong while posting the job.')
+    } finally {
+      setSubmitting(false)
+    }
   }
+
+  if (!currentUser) return null
 
   return (
-    <div className="container py-4">
-      <div className="card shadow-sm mx-auto" style={{maxWidth:'900px'}}>
-        <div className="card-body">
-          <h3 className="mb-3 text-center">{t('createPost.title')}</h3>
-          <form onSubmit={handleSubmit(detailsOfpost)}>
-            <div className="row g-3">
-              <div className="col-md-6">
-                <label className="form-label">{t('createPost.title')}</label>
-                <input type="text" className="form-control" placeholder='Enter a Title' {...register('title', { required: "Enter correct details" })}/>
-                {errors.title && <p className="text-danger small"> {errors.title.message}</p>}
-              </div>
-              <div className="col-md-6">
-                <label className="form-label">{t('createPost.fieldSize')}</label>
-                <input type="number" min="1" max="100" className="form-control" placeholder="How many acres of land" {...register('fieldSize', { required: "FieldSize is required" })}/>
-                {errors.fieldSize && <p className="text-danger small">{errors.fieldSize.message}</p>}
-              </div>
-              <div className="col-md-12">
-                <label className="form-label">{t('createPost.description')}</label>
-                <textarea className="form-control" rows="2" placeholder='Enter details' {...register('content', { required: "Enter valid details" })}></textarea>
-                {errors.content && <p className="text-danger small">{errors.content.message}</p>}
-              </div>
-              <div className="col-md-4">
-                <label className="form-label">{t('createPost.wages')}</label>
-                <input type="number" min="100" max="100000" step="50" className="form-control" placeholder='enter wages' {...register('wages', { required: "Enter positive numbers" })}/>
-                {errors.wages && <p className="text-danger small">{errors.wages.message}</p>}
-              </div>
-              <div className="col-md-4">
-                <label className="form-label">{t('createPost.workersNeeded')}</label>
-                <input type="number" min="1" max="200" step="1" className="form-control" placeholder='Number of workers' {...register('workersNeeded', { required: "Enter workers needed" })}/>
-                {errors.workersNeeded && <p className="text-danger small">{errors.workersNeeded.message}</p>}
-              </div>
-              <div className="col-md-4">
-                <label className="form-label">{t('createPost.startDate')}</label>
-                <input type="date" min={date} className="form-control" {...register('startDate', { required: "StartDate is required" })}/>
-                {errors.start && <p className="text-danger small">{errors.start.message}</p>}
-              </div>
-              <div className="col-md-4">
-                <label className="form-label">{t('createPost.endDate')}</label>
-                <input type="date" min={date} className="form-control" {...register('endDate', { required: "EndDate is required" })}/>
-                {errors.enddate && <p className="text-danger small">{errors.enddate.message}</p>}
-              </div>
-              <div className="col-md-6">
-                <label className="form-label">{t('createPost.location')}</label>
-                {(() => {
-                  const locationRegister = register('location', { required: "Select correct details" })
-                  return (
-                    <select
-                      className="form-select"
-                      {...locationRegister}
-                      onChange={(e) => {
-                        locationRegister.onChange(e)
-                        const code = e.target.value
-                        setSelectedState(code)
-                        setSelectedCity('')
-                        setSelectedMandal('')
-                        setValue('city', '')
-                        setValue('mandal', '')
-                        setValue('village', '')
-                      }}
-                    >
-                  <option value="">{t('createPost.selectState')}</option>
-                  <option value="AP">Andhra Pradesh</option>
-                  <option value="AR">Arunachal Pradesh</option>
-                  <option value="AS">Assam</option>
-                  <option value="BR">Bihar</option>
-                  <option value="CG">Chhattisgarh</option>
-                  <option value="DL">Delhi</option>
-                  <option value="GA">Goa</option>
-                  <option value="GJ">Gujarat</option>
-                  <option value="HR">Haryana</option>
-                  <option value="HP">Himachal Pradesh</option>
-                  <option value="JH">Jharkhand</option>
-                  <option value="KA">Karnataka</option>
-                  <option value="KL">Kerala</option>
-                  <option value="MP">Madhya Pradesh</option>
-                  <option value="MH">Maharashtra</option>
-                  <option value="MN">Manipur</option>
-                  <option value="ML">Meghalaya</option>
-                  <option value="MZ">Mizoram</option>
-                  <option value="NL">Nagaland</option>
-                  <option value="OD">Odisha</option>
-                  <option value="PB">Punjab</option>
-                  <option value="RJ">Rajasthan</option>
-                  <option value="SK">Sikkim</option>
-                  <option value="TN">Tamil Nadu</option>
-                  <option value="TS">Telangana</option>
-                  <option value="TR">Tripura</option>
-                  <option value="UP">Uttar Pradesh</option>
-                  <option value="UK">Uttarakhand</option>
-                  <option value="WB">West Bengal</option>
-                    </select>
-                  )
-                })()}
-                {errors.location && <p className="text-danger small">{errors.location.message}</p>}
-              </div>
-              {(() => {
-                const stateCfg = locationData[selectedState]
-                const cities = stateCfg ? Object.keys(stateCfg.cities || {}) : []
-                const mandals = stateCfg && selectedCity
-                  ? Object.keys(stateCfg.cities[selectedCity]?.mandals || {})
-                  : []
-                const villages = stateCfg && selectedCity && selectedMandal
-                  ? Object.keys(
-                      stateCfg.cities[selectedCity]?.mandals[selectedMandal]?.villages || {}
-                    )
-                  : []
-
-                return (
-                  <>
-                    <div className="col-md-6">
-                      <label className="form-label">{t('createPost.city')}</label>
-                      {stateCfg ? (
-                        <select
-                          className="form-select"
-                          value={selectedCity}
-                          onChange={(e) => {
-                            const val = e.target.value
-                            setSelectedCity(val)
-                            setSelectedMandal('')
-                            setValue('city', val)
-                            setValue('mandal', '')
-                            setValue('village', '')
-                          }}
-                        >
-                          <option value="">Select city</option>
-                          {cities.map((c) => (
-                            <option key={c} value={c}>{c}</option>
-                          ))}
-                        </select>
-                      ) : (
-                        <input type="text" className="form-control" placeholder="City or town" {...register('city')} />
-                      )}
-                    </div>
-                    <div className="col-md-6">
-                      <label className="form-label">{t('createPost.mandal')}</label>
-                      {stateCfg && selectedCity ? (
-                        <select
-                          className="form-select"
-                          value={selectedMandal}
-                          onChange={(e) => {
-                            const val = e.target.value
-                            setSelectedMandal(val)
-                            setValue('mandal', val)
-                            setValue('village', '')
-                          }}
-                        >
-                          <option value="">Select mandal</option>
-                          {mandals.map((m) => (
-                            <option key={m} value={m}>{m}</option>
-                          ))}
-                        </select>
-                      ) : (
-                        <input type="text" className="form-control" placeholder="Mandal" {...register('mandal')} />
-                      )}
-                    </div>
-                    <div className="col-md-6">
-                      <label className="form-label">{t('createPost.village')}</label>
-                      {stateCfg && selectedCity && selectedMandal ? (
-                        <select
-                          className="form-select"
-                          onChange={(e) => {
-                            const val = e.target.value
-                            setValue('village', val)
-                            const zip =
-                              stateCfg.cities[selectedCity]
-                                ?.mandals[selectedMandal]
-                                ?.villages[val] || ''
-                            if (zip) {
-                              setValue('zipcode', zip)
-                            }
-                          }}
-                        >
-                          <option value="">Select village</option>
-                          {villages.map((v) => (
-                            <option key={v} value={v}>{v}</option>
-                          ))}
-                        </select>
-                      ) : (
-                        <input type="text" className="form-control" placeholder="Village" {...register('village')} />
-                      )}
-                    </div>
-                  </>
-                )
-              })()}
-              <div className="col-md-6">
-                <label className="form-label">{t('createPost.timings')}</label>
-                <input type="text" className="form-control" placeholder={t('createPost.timingsPlaceholder')} {...register('Timings', { required: "Timings is required" })}/>
-                {errors.Timings && <p className="text-danger small">{errors.Timings.message}</p>}
-              </div>
-              <div className="col-md-6">
-                <label className="form-label">{t('createPost.zipCode')}</label>
-                <input
-                  type="number"
-                  min="100000"
-                  max="999999"
-                  className="form-control"
-                  placeholder="XXXXXX"
-                  {...register('zipcode',{required:"must have 6-digits"})}
-                />
-                {errors.zipcode && <p className="text-danger small">{errors.zipcode.message}</p>}
-              </div>
-            </div>
-            <div className="d-flex justify-content-end mt-4">
-              <button type="submit" className='btn btn-primary px-4'>{t('createPost.publish')}</button>
-            </div>
-          </form>
+    <div className="farmer-dashboard create-post">
+      <div className="fd-card create-post__header">
+        <div>
+          <h3>{t('createPost.title', { defaultValue: 'Post a Job' })}</h3>
+          <p className="fd-card__sub">
+            Share work details so skilled labourers near you can apply.
+          </p>
         </div>
+        <span className="create-post__region-badge">
+          <HiOutlineLocationMarker /> {SERVICE_STATE_LABEL}
+        </span>
       </div>
+
+      <div className="create-post__region-note">
+        <strong>Service area:</strong> {SERVICE_REGION_NOTE}
+      </div>
+
+      {formError && <p className="fd-settings-alert fd-settings-alert--err">{formError}</p>}
+
+      <form onSubmit={handleSubmit(onSubmit)} className="create-post__form">
+        <input type="hidden" {...register('state')} value={SERVICE_STATE_CODE} />
+        <input type="hidden" {...register('city')} value={district} />
+        <input type="hidden" {...register('mandal')} value={mandal} />
+
+        <section className="fd-card create-post__section">
+          <h4 className="create-post__section-title">Job details</h4>
+          <div className="create-post__grid">
+            <label className="create-post__field create-post__field--full">
+              <span>Job title</span>
+              <input
+                type="text"
+                placeholder="e.g. Chili harvesting, Cotton picking"
+                {...register('title', { required: 'Job title is required' })}
+              />
+              {errors.title && <em>{errors.title.message}</em>}
+            </label>
+
+            <label className="create-post__field create-post__field--full">
+              <span>Description</span>
+              <textarea
+                rows={3}
+                placeholder="Describe the work, crop, tools provided, etc."
+                {...register('content', { required: 'Description is required' })}
+              />
+              {errors.content && <em>{errors.content.message}</em>}
+            </label>
+
+            <label className="create-post__field">
+              <span>Field size (acres)</span>
+              <input
+                type="number"
+                min="0.5"
+                step="0.5"
+                placeholder="e.g. 5"
+                {...register('fieldSize', { required: 'Field size is required', min: 0.5 })}
+              />
+              {errors.fieldSize && <em>{errors.fieldSize.message}</em>}
+            </label>
+
+            <label className="create-post__field">
+              <span>
+                <HiOutlineCurrencyRupee style={{ verticalAlign: 'middle' }} /> Daily wage (₹)
+              </span>
+              <input
+                type="number"
+                min="100"
+                step="50"
+                placeholder="e.g. 600"
+                {...register('wages', { required: 'Wage is required', min: 100 })}
+              />
+              {errors.wages && <em>{errors.wages.message}</em>}
+            </label>
+
+            <label className="create-post__field">
+              <span>
+                <HiOutlineUsers style={{ verticalAlign: 'middle' }} /> Workers needed
+              </span>
+              <input
+                type="number"
+                min="1"
+                max="200"
+                placeholder="e.g. 10"
+                {...register('workersNeeded', { required: 'Required', min: 1 })}
+              />
+              {errors.workersNeeded && <em>{errors.workersNeeded.message}</em>}
+            </label>
+
+            <label className="create-post__field">
+              <span>
+                <HiOutlineCalendar style={{ verticalAlign: 'middle' }} /> Work timings
+              </span>
+              <select {...register('Timings', { required: 'Select timings' })}>
+                {TIMING_OPTIONS.map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt}
+                  </option>
+                ))}
+              </select>
+              {errors.Timings && <em>{errors.Timings.message}</em>}
+            </label>
+          </div>
+        </section>
+
+        <section className="fd-card create-post__section">
+          <h4 className="create-post__section-title">
+            <HiOutlineLocationMarker /> Location (Andhra Pradesh)
+          </h4>
+          <p className="fd-card__sub create-post__location-hint">
+            Select your village — {villages.length} villages under Mantralayam mandal (PIN 518345).
+          </p>
+
+          <div className="create-post__grid">
+            <label className="create-post__field">
+              <span>State</span>
+              <input type="text" value={SERVICE_STATE_LABEL} disabled className="is-disabled" />
+            </label>
+
+            <label className="create-post__field">
+              <span>District</span>
+              <input
+                type="text"
+                value={SERVICE_DISTRICT}
+                disabled
+                className="is-disabled"
+                readOnly
+              />
+            </label>
+
+            <label className="create-post__field">
+              <span>Mandal</span>
+              <input
+                type="text"
+                value={SERVICE_MANDAL}
+                disabled
+                className="is-disabled"
+                readOnly
+              />
+            </label>
+
+            <label className="create-post__field create-post__field--full">
+              <span>Village</span>
+              <select {...register('village', { required: 'Select a village' })}>
+                <option value="">Select village in Mantralayam mandal</option>
+                {villages.map((v) => (
+                  <option key={v} value={v}>
+                    {v}
+                  </option>
+                ))}
+              </select>
+              {errors.village && <em>{errors.village.message}</em>}
+            </label>
+
+            <label className="create-post__field">
+              <span>PIN code</span>
+              <input
+                type="number"
+                readOnly
+                placeholder="Auto-filled"
+                {...register('zipcode', { required: 'PIN is required' })}
+              />
+              {errors.zipcode && <em>{errors.zipcode.message}</em>}
+            </label>
+          </div>
+        </section>
+
+        <section className="fd-card create-post__section">
+          <h4 className="create-post__section-title">Schedule</h4>
+          <div className="create-post__grid">
+            <label className="create-post__field">
+              <span>Start date</span>
+              <input
+                type="date"
+                min={minDate}
+                {...register('startDate', { required: 'Start date is required' })}
+              />
+              {errors.startDate && <em>{errors.startDate.message}</em>}
+            </label>
+
+            <label className="create-post__field">
+              <span>End date</span>
+              <input
+                type="date"
+                min={minDate}
+                {...register('endDate', { required: 'End date is required' })}
+              />
+              {errors.endDate && <em>{errors.endDate.message}</em>}
+            </label>
+          </div>
+        </section>
+
+        <div className="create-post__actions">
+          <button
+            type="button"
+            className="fd-btn-outline"
+            onClick={() => nav(`/farmerprofile/${currentUser.email}/`)}
+          >
+            Cancel
+          </button>
+          <button type="submit" className="fd-btn-primary" disabled={submitting}>
+            {submitting ? 'Publishing…' : t('createPost.publish', { defaultValue: 'Publish job' })}
+          </button>
+        </div>
+      </form>
     </div>
   )
 }

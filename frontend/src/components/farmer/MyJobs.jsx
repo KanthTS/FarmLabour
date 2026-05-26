@@ -37,7 +37,7 @@ function MyJobs() {
           <div className="fl-section-title">My Jobs</div>
           <div className="small fl-muted">Manage your postings and review applicants.</div>
         </div>
-        <button className="btn btn-success" onClick={()=>nav(`/farmerprofile/${currentUser.email}/createpost`)}>Post new job</button>
+        <button className="btn btn-success" onClick={()=>nav(`/farmerprofile/${currentUser.email}/createjob`)}>Post new job</button>
       </div>
       {loading && <p>Loading...</p>}
       {err && <p className="text-danger">{err}</p>}

@@ -1,6 +1,7 @@
 const exp=require('express')
 const farmerApp=exp.Router()
 const farmerModel=require('../Models/farmerModel')
+const { SERVICE_DISTRICTS } = require('../config/serviceRegion')
 const handler=require('express-async-handler')
 const jobModel=require('../Models/jobModel')
 const applicationModel=require('../Models/applicationModel')
@@ -48,13 +49,21 @@ farmerApp.put('/me', requireAuth, requireRole('farmer'), validate(profileSchema)
 
 farmerApp.get('/jobs',handler(async(req,res)=>{
     const {location,search}=req.query
-    const query={isJobActive:true}
+    const { SERVICE_MANDAL } = require('../config/serviceRegion')
+    const regionFilter = {
+      $or: [
+        { mandal: SERVICE_MANDAL },
+        { location: { $regex: 'Mantralayam', $options: 'i' } },
+      ],
+    }
+    const filters = [{ isJobActive: true }, regionFilter]
     if(location){
-        query.location = { $regex: location, $options: 'i' }
+        filters.push({ location: { $regex: location, $options: 'i' } })
     }
     if(search){
-        query.title = { $regex: search, $options: 'i' }
+        filters.push({ title: { $regex: search, $options: 'i' } })
     }
+    const query = { $and: filters }
     let r=await jobModel.find(query).sort({DateOfCreation:-1})
     res.status(200).send({message:"jobdetails",payload:r})
 }))

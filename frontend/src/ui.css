@@ -38,3 +38,779 @@ body{
   text-decoration: none;
 }
 
+.glass-card {
+  background: rgba(15, 23, 42, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(24px);
+}
+
+.glass-input {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #f8fafc;
+}
+
+.glass-input::placeholder {
+  color: rgba(148, 163, 184, 0.7);
+}
+
+.shadow-glow {
+  box-shadow: 0 24px 70px rgba(16, 185, 129, 0.18);
+}
+
+button:hover {
+  transform: translateY(0);
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+.float-up {
+  animation: float 10s ease-in-out infinite;
+}
+
+/* Farmer dashboard shell */
+.farmer-shell {
+  min-height: 100vh;
+  background: #f0f7f2;
+  color: #0f172a;
+}
+
+.farmer-shell--dark {
+  background: #0f172a;
+  color: #f8fafc;
+}
+
+.farmer-shell__inner {
+  max-width: 2200px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 2rem;
+  display: grid;
+  gap: 1.25rem;
+}
+
+@media (min-width: 1200px) {
+  .farmer-shell__inner {
+    grid-template-columns: 280px minmax(0, 1fr);
+    padding: 1.5rem 1.5rem 2rem;
+  }
+}
+
+.farmer-sidebar {
+  background: linear-gradient(180deg, #14532d 0%, #166534 45%, #15803d 100%);
+  color: #ecfdf5;
+  border-radius: 28px;
+  padding: 1.25rem 1rem 1rem;
+  box-shadow: 0 24px 60px rgba(20, 83, 45, 0.25);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+@media (min-width: 1200px) {
+  .farmer-sidebar {
+    position: sticky;
+    top: 1rem;
+    align-self: start;
+    max-height: calc(100vh - 2rem);
+    overflow: auto;
+  }
+}
+
+.farmer-sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.35rem 1rem;
+}
+
+.farmer-sidebar__logo {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.12);
+  font-size: 1.4rem;
+}
+
+.farmer-sidebar__eyebrow {
+  margin: 0;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  opacity: 0.8;
+}
+
+.farmer-sidebar__title {
+  margin: 0.15rem 0 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.farmer-sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+  overflow: auto;
+  padding-right: 0.15rem;
+}
+
+.farmer-sidebar__link {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 16px;
+  color: rgba(236, 253, 245, 0.88);
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 600;
+  transition: background 0.15s ease;
+}
+
+.farmer-sidebar__link:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.farmer-sidebar__link.is-active {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.farmer-sidebar__link-icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 1.1rem;
+}
+
+.farmer-sidebar__link.is-active .farmer-sidebar__link-icon {
+  background: rgba(34, 197, 94, 0.25);
+}
+
+.farmer-sidebar__badge {
+  margin-left: auto;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+}
+
+.farmer-sidebar__soon-badge {
+  margin-left: auto;
+  padding: 0.15rem 0.45rem;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.15);
+  color: rgba(236, 253, 245, 0.85);
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.farmer-sidebar__link--soon {
+  opacity: 0.88;
+}
+
+.farmer-sidebar__profile {
+  margin-top: 1rem;
+  padding: 0.85rem;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.55rem 0.75rem;
+  align-items: center;
+}
+
+.farmer-sidebar__avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  object-fit: cover;
+  grid-row: span 2;
+}
+
+.farmer-sidebar__name {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.farmer-sidebar__tier {
+  margin: 0;
+  font-size: 0.72rem;
+  opacity: 0.85;
+}
+
+.farmer-sidebar__view-btn {
+  grid-column: 1 / -1;
+  border: 0;
+  border-radius: 12px;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.farmer-sidebar__theme {
+  margin-top: 0.75rem;
+  padding: 0.65rem 0.35rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  opacity: 0.9;
+}
+
+.farmer-sidebar__toggle {
+  width: 48px;
+  height: 26px;
+  border-radius: 999px;
+  border: 0;
+  background: rgba(255, 255, 255, 0.25);
+  padding: 3px;
+  cursor: pointer;
+}
+
+.farmer-sidebar__toggle span {
+  display: block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.2s ease;
+}
+
+.farmer-sidebar__toggle.is-on {
+  background: #4ade80;
+}
+
+.farmer-sidebar__toggle.is-on span {
+  transform: translateX(22px);
+}
+
+.farmer-main {
+  min-width: 0;
+}
+
+.farmer-topbar {
+  background: #fff;
+  border-radius: 24px;
+  padding: 1.15rem 1.35rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.06);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.farmer-shell--dark .farmer-topbar {
+  background: #1e293b;
+}
+
+.farmer-topbar__greet {
+  margin: 0;
+  font-size: 1.05rem;
+  color: #0f172a;
+}
+
+.farmer-shell--dark .farmer-topbar__greet {
+  color: #f8fafc;
+}
+
+.farmer-topbar__sub {
+  margin: 0.35rem 0 0;
+  font-size: 0.88rem;
+  color: #64748b;
+}
+
+.farmer-topbar__tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.farmer-topbar__search {
+  position: relative;
+  min-width: 220px;
+}
+
+.farmer-topbar__search input {
+  width: 100%;
+  min-width: 260px;
+  border: 1px solid #e2e8f0;
+  border-radius: 999px;
+  padding: 0.65rem 2.5rem 0.65rem 1rem;
+  background: #f8fafc;
+  font-size: 0.88rem;
+}
+
+.farmer-topbar__search svg {
+  position: absolute;
+  right: 0.9rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  font-size: 1.15rem;
+  pointer-events: none;
+}
+
+.farmer-topbar__icon-btn,
+.farmer-topbar__user {
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.farmer-topbar__icon-btn {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  font-size: 1.2rem;
+  color: #475569;
+}
+
+.farmer-topbar__dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+}
+
+.farmer-topbar__user {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.35rem 0.85rem 0.35rem 0.35rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.farmer-topbar__user img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Labour dashboard shell */
+.labour-shell {
+  min-height: 100vh;
+  background: #f4faf6;
+  color: #0f172a;
+}
+
+.labour-shell--dark {
+  background: #0f172a;
+  color: #f8fafc;
+}
+
+.labour-shell__inner {
+  max-width: 2200px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 2rem;
+  display: grid;
+  gap: 1.25rem;
+}
+
+@media (min-width: 1200px) {
+  .labour-shell__inner {
+    grid-template-columns: 280px minmax(0, 1fr);
+    padding: 1.5rem 1.5rem 2rem;
+  }
+}
+
+.labour-sidebar {
+  background: linear-gradient(180deg, #14532d 0%, #166534 50%, #15803d 100%);
+  color: #ecfdf5;
+  border-radius: 28px;
+  padding: 1.25rem 1rem 1rem;
+  box-shadow: 0 24px 60px rgba(20, 83, 45, 0.22);
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 1200px) {
+  .labour-sidebar {
+    position: sticky;
+    top: 1rem;
+    align-self: start;
+    max-height: calc(100vh - 2rem);
+    overflow: auto;
+  }
+}
+
+.labour-sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-bottom: 1rem;
+}
+
+.labour-sidebar__brand-img {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+}
+
+.labour-sidebar__eyebrow {
+  margin: 0;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  opacity: 0.85;
+}
+
+.labour-sidebar__title {
+  margin: 0.15rem 0 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.labour-sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  flex: 1;
+}
+
+.labour-sidebar__link {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 14px;
+  color: rgba(236, 253, 245, 0.9);
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.labour-sidebar__link:hover,
+.labour-sidebar__link.is-active {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+}
+
+.labour-sidebar__link-icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 1.05rem;
+}
+
+.labour-sidebar__chevron {
+  margin-left: auto;
+  opacity: 0.7;
+  font-size: 0.9rem;
+}
+
+.labour-sidebar__badge {
+  margin-left: auto;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #4ade80;
+  color: #14532d;
+  font-size: 0.68rem;
+  font-weight: 800;
+  display: grid;
+  place-items: center;
+}
+
+.labour-sidebar__soon-badge {
+  margin-left: auto;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  opacity: 0.75;
+  font-weight: 700;
+}
+
+.labour-sidebar__complete {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 20px;
+  background: rgba(15, 23, 42, 0.35);
+}
+
+.labour-sidebar__complete-title {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.labour-sidebar__complete-text {
+  margin: 0.35rem 0 0.75rem;
+  font-size: 0.72rem;
+  opacity: 0.88;
+  line-height: 1.4;
+}
+
+.labour-sidebar__ring-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.labour-sidebar__ring {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: conic-gradient(#4ade80 var(--pct), rgba(255, 255, 255, 0.15) 0);
+  display: grid;
+  place-items: center;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.labour-sidebar__ring span {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.5);
+  display: grid;
+  place-items: center;
+}
+
+.labour-sidebar__complete-label {
+  font-size: 0.78rem;
+  opacity: 0.9;
+}
+
+.labour-sidebar__complete-btn {
+  width: 100%;
+  border: 0;
+  border-radius: 12px;
+  padding: 0.55rem;
+  background: #fff;
+  color: #15803d;
+  font-weight: 700;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.labour-sidebar__theme {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.82rem;
+}
+
+.labour-sidebar__toggle {
+  width: 48px;
+  height: 26px;
+  border-radius: 999px;
+  border: 0;
+  background: rgba(255, 255, 255, 0.25);
+  padding: 3px;
+  cursor: pointer;
+}
+
+.labour-sidebar__toggle span {
+  display: block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.2s ease;
+}
+
+.labour-sidebar__toggle.is-on span {
+  transform: translateX(22px);
+}
+
+.labour-main {
+  min-width: 0;
+}
+
+.labour-topbar {
+  background: #fff;
+  border-radius: 24px;
+  padding: 1.15rem 1.35rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.06);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.labour-topbar__greet {
+  margin: 0;
+  font-size: 1.05rem;
+  color: #0f172a;
+}
+
+.labour-topbar__sub {
+  margin: 0.35rem 0 0;
+  font-size: 0.88rem;
+  color: #64748b;
+}
+
+.labour-topbar__tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.labour-topbar__search {
+  position: relative;
+}
+
+.labour-topbar__search input {
+  min-width: 280px;
+  border: 1px solid #e2e8f0;
+  border-radius: 999px;
+  padding: 0.65rem 2.5rem 0.65rem 1rem;
+  background: #f8fafc;
+  font-size: 0.88rem;
+}
+
+.labour-topbar__search svg {
+  position: absolute;
+  right: 0.9rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.labour-topbar__icon-btn,
+.labour-topbar__user {
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.labour-topbar__icon-btn {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  color: #475569;
+}
+
+.labour-topbar__dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+}
+
+.labour-topbar__user {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.75rem 0.35rem 0.35rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.labour-topbar__user img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.labour-topbar__user span {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.2;
+  text-align: left;
+}
+
+.labour-topbar__user small {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.labour-sidebar__logout {
+  margin-top: 0.65rem;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fef2f2;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.labour-sidebar__logout:hover {
+  background: rgba(239, 68, 68, 0.35);
+  border-color: rgba(254, 202, 202, 0.4);
+}
+
+.ld-settings-signout {
+  border: 1px solid #fecaca;
+}
+

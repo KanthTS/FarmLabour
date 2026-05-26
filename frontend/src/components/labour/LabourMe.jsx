@@ -2,9 +2,10 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import client from '../../api/client'
 import { createObj } from '../contexts/FarmerLabourContext'
+import './LabourDashboard.css'
 
 function LabourMe() {
-  const { currentUser } = useContext(createObj)
+  const { currentUser, setCurrentUser } = useContext(createObj)
   const { register, handleSubmit, reset } = useForm()
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -49,7 +50,8 @@ function LabourMe() {
         experienceYears: Number(values.experienceYears || 0),
         preferredWage: values.preferredWage === '' ? undefined : Number(values.preferredWage)
       }
-      await client.put('/labour-api/me', payload)
+      const res = await client.put('/labour-api/me', payload)
+      if (res.data?.user) setCurrentUser({ ...currentUser, ...res.data.user })
     } catch (e) {
       setErr(e.response?.data?.message || 'Failed to save profile')
     } finally {
@@ -60,14 +62,12 @@ function LabourMe() {
   if (!currentUser) return null
 
   return (
-    <div className="fl-page">
-      <div className="container">
-        <div className="card fl-card">
-          <div className="card-body">
+    <div className="labour-dashboard">
+      <div className="ld-card">
             <div className="d-flex justify-content-between align-items-center mb-3">
               <div>
-                <div className="fl-section-title">My Profile</div>
-                <div className="small fl-muted">Update skills, experience and location.</div>
+                <h3 style={{ margin: 0 }}>My Profile</h3>
+                <p className="ld-job__meta" style={{ marginTop: '0.35rem' }}>Update skills, experience and Mantralayam area location.</p>
               </div>
             </div>
 
@@ -119,14 +119,12 @@ function LabourMe() {
                   </div>
                 </div>
                 <div className="d-flex justify-content-end mt-4">
-                  <button className="btn btn-success" type="submit" disabled={saving}>
+                  <button className="ld-apply-btn" type="submit" disabled={saving} style={{ padding: '0.65rem 1.5rem' }}>
                     {saving ? 'Saving...' : 'Save profile'}
                   </button>
                 </div>
               </form>
             )}
-          </div>
-        </div>
       </div>
     </div>
   )

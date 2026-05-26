@@ -1,0 +1,123 @@
+.create-post__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.create-post__region-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  background: #ecfdf5;
+  color: #15803d;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.create-post__region-note {
+  padding: 0.85rem 1.1rem;
+  border-radius: 14px;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  color: #92400e;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.create-post__form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.create-post__section-title {
+  margin: 0 0 1rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.create-post__location-hint {
+  margin: -0.5rem 0 1rem;
+}
+
+.create-post__grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .create-post__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.create-post__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.create-post__field--full {
+  grid-column: 1 / -1;
+}
+
+.create-post__field span {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+.create-post__field input,
+.create-post__field select,
+.create-post__field textarea {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0.7rem 0.85rem;
+  font-size: 0.9rem;
+  background: #f8fafc;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.create-post__field input:focus,
+.create-post__field select:focus,
+.create-post__field textarea:focus {
+  outline: none;
+  border-color: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
+  background: #fff;
+}
+
+.create-post__field input.is-disabled,
+.create-post__field input:disabled {
+  background: #f1f5f9;
+  color: #64748b;
+  cursor: not-allowed;
+}
+
+.create-post__field select:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.create-post__field em {
+  font-size: 0.78rem;
+  color: #dc2626;
+  font-style: normal;
+}
+
+.create-post__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-bottom: 0.5rem;
+}
